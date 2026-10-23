@@ -29,23 +29,21 @@ async function seedDatabase() {
     await client.query('COMMIT');
     console.log('[DB Seed] Seed SQL executed successfully.');
 
-    // Count seeded records
-    const counts = await Promise.all([
-      client.query('SELECT COUNT(*) AS count FROM users'),
-      client.query('SELECT COUNT(*) AS count FROM vendors'),
-      client.query('SELECT COUNT(*) AS count FROM categories'),
-      client.query('SELECT COUNT(*) AS count FROM products'),
-      client.query('SELECT COUNT(*) AS count FROM product_images'),
-      client.query('SELECT COUNT(*) AS count FROM coupons'),
-    ]);
+    // Count seeded records sequentially
+    const usersCount = (await client.query('SELECT COUNT(*) AS count FROM users')).rows[0].count;
+    const vendorsCount = (await client.query('SELECT COUNT(*) AS count FROM vendors')).rows[0].count;
+    const categoriesCount = (await client.query('SELECT COUNT(*) AS count FROM categories')).rows[0].count;
+    const productsCount = (await client.query('SELECT COUNT(*) AS count FROM products')).rows[0].count;
+    const imagesCount = (await client.query('SELECT COUNT(*) AS count FROM product_images')).rows[0].count;
+    const couponsCount = (await client.query('SELECT COUNT(*) AS count FROM coupons')).rows[0].count;
 
     console.log('[DB Seed] Current database record summary:');
-    console.log(`   - Users:          ${counts[0].rows[0].count}`);
-    console.log(`   - Vendors:        ${counts[1].rows[0].count}`);
-    console.log(`   - Categories:     ${counts[2].rows[0].count}`);
-    console.log(`   - Products:       ${counts[3].rows[0].count}`);
-    console.log(`   - Product Images: ${counts[4].rows[0].count}`);
-    console.log(`   - Coupons:        ${counts[5].rows[0].count}`);
+    console.log(`   - Users:          ${usersCount}`);
+    console.log(`   - Vendors:        ${vendorsCount}`);
+    console.log(`   - Categories:     ${categoriesCount}`);
+    console.log(`   - Products:       ${productsCount}`);
+    console.log(`   - Product Images: ${imagesCount}`);
+    console.log(`   - Coupons:        ${couponsCount}`);
 
     console.log('====================================================');
     console.log('✅ Database seeded successfully.');

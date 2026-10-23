@@ -1,6 +1,44 @@
 const fs = require('fs');
 const path = require('path');
+const { Client } = require('pg');
+const config = require('../src/config/env');
 const { pool } = require('../src/config/db');
+
+/**
+ * Ensures markethub_db database exists on the PostgreSQL server.
+ */
+async function ensureDatabaseExists() {
+  try {
+    const url = new URL(config.databaseUrl);
+    const targetDb = url.pathname.replace(/^\//, '');
+
+    if (!targetDb || targetDb === 'postgres') return;
+
+    // Connect to default 'postgres' database to verify/create target database
+    url.pathname = '/postgres';
+    const rootClient = new Client({ connectionString: url.toString() });
+
+    await rootClient.connect();
+    const checkRes = await rootClient.query(
+      'SELECT 1 FROM pg_database WHERE datname = $1',
+      [targetDb]
+    );
+
+    if (checkRes.rowCount === 0) {
+      console.log(`[DB Init] Database "${targetDb}" does not exist. Creating...`);
+      // Database names cannot be parameterized in CREATE DATABASE
+      await rootClient.query(`CREATE DATABASE "${targetDb}"`);
+      console.log(`[DB Init] Database "${targetDb}" created successfully.`);
+    } else {
+      console.log(`[DB Init] Database "${targetDb}" verified.`);
+    }
+
+    await rootClient.end();
+  } catch (err) {
+    // If root connection fails (e.g. restricted permissions or bad credentials),
+    // let main pool connection report the specific connection issue.
+  }
+}
 
 /**
  * Initializes the MarketHub database schema by executing schema.sql.
@@ -20,6 +58,10 @@ async function initializeDatabase() {
   console.log('📦 MarketHub: Initializing PostgreSQL Database Schema');
   console.log('====================================================');
 
+  // Step 1: Ensure markethub_db database exists
+  await ensureDatabaseExists();
+
+  // Step 2: Apply schema to markethub_db
   let client;
   try {
     client = await pool.connect();
