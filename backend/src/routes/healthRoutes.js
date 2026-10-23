@@ -1,5 +1,5 @@
 const express = require('express');
-const { getHealthStatus } = require('../controllers/healthController');
+const { getHealthStatus, getDatabaseHealth } = require('../controllers/healthController');
 
 const router = express.Router();
 
@@ -9,5 +9,12 @@ const router = express.Router();
  * @access  Public
  */
 router.get('/', getHealthStatus);
+
+/**
+ * @route   GET /api/health/db
+ * @desc    Get PostgreSQL database connection health status
+ * @access  Public
+ */
+router.get('/db', getDatabaseHealth);
 
 module.exports = router;

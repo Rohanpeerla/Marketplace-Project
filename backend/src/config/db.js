@@ -3,7 +3,7 @@ const config = require('./env');
 
 /**
  * PostgreSQL connection pool configuration.
- * Prepared for MarketHub database operations.
+ * Reads DATABASE_URL directly from validated environment configuration.
  */
 const pool = new Pool({
   connectionString: config.databaseUrl,
@@ -15,7 +15,7 @@ pool.on('error', (err) => {
 });
 
 /**
- * Execute SQL queries through connection pool.
+ * Execute parameterized SQL queries through connection pool.
  * @param {string} text - SQL query string
  * @param {Array} params - Parameterized query values
  */
@@ -23,7 +23,7 @@ const query = (text, params) => pool.query(text, params);
 
 /**
  * Verify database connectivity during server startup.
- * Non-blocking: Server can still boot even if local PostgreSQL is not yet running.
+ * Non-blocking: Server continues to run even if PostgreSQL is pending local setup.
  */
 const testConnection = async () => {
   try {
@@ -41,8 +41,31 @@ const testConnection = async () => {
   }
 };
 
+/**
+ * Dedicated health check helper for GET /api/health/db.
+ * Never leaks database credentials or internal connection strings.
+ */
+const checkHealth = async () => {
+  const start = Date.now();
+  try {
+    const client = await pool.connect();
+    await client.query('SELECT 1');
+    client.release();
+    return {
+      isConnected: true,
+      latencyMs: Date.now() - start,
+    };
+  } catch (error) {
+    return {
+      isConnected: false,
+      message: 'Database is unavailable. Please verify PostgreSQL connection.',
+    };
+  }
+};
+
 module.exports = {
   pool,
   query,
   testConnection,
+  checkHealth,
 };

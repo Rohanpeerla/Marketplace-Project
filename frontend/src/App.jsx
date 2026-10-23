@@ -7,38 +7,58 @@ import Footer from './components/Footer';
 
 export default function App() {
   const [apiStatus, setApiStatus] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [apiLoading, setApiLoading] = useState(true);
+  const [apiError, setApiError] = useState(null);
 
-  const checkBackendHealth = async () => {
-    setLoading(true);
-    setError(null);
+  const [dbStatus, setDbStatus] = useState(null);
+  const [dbLoading, setDbLoading] = useState(true);
+  const [dbError, setDbError] = useState(null);
+
+  const fetchHealthChecks = async () => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
+    
+    // Check API Health
+    setApiLoading(true);
+    setApiError(null);
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
-      let response;
+      let res;
       try {
-        response = await fetch(`${baseUrl}/api/health`);
+        res = await fetch(`${baseUrl}/api/health`);
       } catch {
-        response = await fetch('http://localhost:5000/api/health');
+        res = await fetch('http://localhost:5000/api/health');
       }
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: Failed to reach backend API`);
-      }
-
-      const data = await response.json();
+      if (!res.ok) throw new Error(`HTTP ${res.status}: API unreachable`);
+      const data = await res.json();
       setApiStatus(data);
     } catch (err) {
-      console.warn('Backend health check error:', err.message);
-      setError(err.message || 'Could not connect to backend server');
+      setApiError(err.message || 'API connection failed');
       setApiStatus(null);
     } finally {
-      setLoading(false);
+      setApiLoading(false);
+    }
+
+    // Check Database Health (GET /api/health/db)
+    setDbLoading(true);
+    setDbError(null);
+    try {
+      let resDb;
+      try {
+        resDb = await fetch(`${baseUrl}/api/health/db`);
+      } catch {
+        resDb = await fetch('http://localhost:5000/api/health/db');
+      }
+      const dataDb = await resDb.json();
+      setDbStatus(dataDb);
+    } catch (err) {
+      setDbError('Database check could not be completed');
+      setDbStatus(null);
+    } finally {
+      setDbLoading(false);
     }
   };
 
   useEffect(() => {
-    checkBackendHealth();
+    fetchHealthChecks();
   }, []);
 
   return (
@@ -51,12 +71,15 @@ export default function App() {
         {/* Hero Section */}
         <Hero />
 
-        {/* Live Backend Connection Verification Banner */}
+        {/* Live Infrastructure Status Card (API + DB) */}
         <BackendStatusCard
           apiStatus={apiStatus}
-          loading={loading}
-          error={error}
-          onRefresh={checkBackendHealth}
+          apiLoading={apiLoading}
+          apiError={apiError}
+          dbStatus={dbStatus}
+          dbLoading={dbLoading}
+          dbError={dbError}
+          onRefresh={fetchHealthChecks}
         />
 
         {/* Product Marketplace Placeholder Section */}
