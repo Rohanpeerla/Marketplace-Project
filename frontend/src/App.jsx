@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import ProductSection from './components/ProductSection';
+import AuthTestCard from './components/AuthTestCard';
 import BackendStatusCard from './components/BackendStatusCard';
+import ProductSection from './components/ProductSection';
 import Footer from './components/Footer';
+import AuthModal from './components/AuthModal';
 
 export default function App() {
   const [apiStatus, setApiStatus] = useState(null);
@@ -13,6 +16,15 @@ export default function App() {
   const [dbStatus, setDbStatus] = useState(null);
   const [dbLoading, setDbLoading] = useState(true);
   const [dbError, setDbError] = useState(null);
+
+  // Auth Modal State
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState('login');
+
+  const openAuthModal = (tab = 'login') => {
+    setAuthModalTab(tab);
+    setIsAuthModalOpen(true);
+  };
 
   const fetchHealthChecks = async () => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
@@ -62,32 +74,44 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      {/* Top Navigation */}
-      <Navbar apiStatus={apiStatus} />
+    <AuthProvider>
+      <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+        {/* Top Navigation */}
+        <Navbar apiStatus={apiStatus} onOpenAuthModal={openAuthModal} />
 
-      {/* Main Content Area */}
-      <main className="flex-1">
-        {/* Hero Section */}
-        <Hero />
+        {/* Main Content Area */}
+        <main className="flex-1">
+          {/* Hero Section */}
+          <Hero onOpenAuthModal={openAuthModal} />
 
-        {/* Live Infrastructure Status Card (API + DB) */}
-        <BackendStatusCard
-          apiStatus={apiStatus}
-          apiLoading={apiLoading}
-          apiError={apiError}
-          dbStatus={dbStatus}
-          dbLoading={dbLoading}
-          dbError={dbError}
-          onRefresh={fetchHealthChecks}
+          {/* Interactive Stage 3 RBAC Verification Section */}
+          <AuthTestCard onOpenAuthModal={openAuthModal} />
+
+          {/* Live Infrastructure Status Card (API + DB) */}
+          <BackendStatusCard
+            apiStatus={apiStatus}
+            apiLoading={apiLoading}
+            apiError={apiError}
+            dbStatus={dbStatus}
+            dbLoading={dbLoading}
+            dbError={dbError}
+            onRefresh={fetchHealthChecks}
+          />
+
+          {/* Product Marketplace Placeholder Section */}
+          <ProductSection />
+        </main>
+
+        {/* Footer */}
+        <Footer />
+
+        {/* Authentication Modal (Sign In / Sign Up) */}
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          initialTab={authModalTab}
         />
-
-        {/* Product Marketplace Placeholder Section */}
-        <ProductSection />
-      </main>
-
-      {/* Footer */}
-      <Footer />
-    </div>
+      </div>
+    </AuthProvider>
   );
 }

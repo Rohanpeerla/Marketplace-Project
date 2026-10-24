@@ -3,7 +3,7 @@
 -- Database Seed Data (PostgreSQL)
 -- =============================================================================
 -- Seed Password for all test accounts: Password123!
--- Bcrypt Hash (cost factor 10): $2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW
+-- Bcrypt Hash (cost factor 10): $2b$10$hzFlWYY/1Ppv4VqLiW7UIewPv9/RVcNcEdlbenEPYK4PWQOLnArDK
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
@@ -12,14 +12,14 @@
 INSERT INTO users (id, name, email, password_hash, role)
 VALUES
     -- Admin User
-    ('a0000000-0000-0000-0000-000000000001', 'System Administrator', 'admin@markethub.com', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 'admin'),
+    ('a0000000-0000-0000-0000-000000000001', 'System Administrator', 'admin@markethub.com', '$2b$10$hzFlWYY/1Ppv4VqLiW7UIewPv9/RVcNcEdlbenEPYK4PWQOLnArDK', 'admin'),
     -- Vendor Users
-    ('b0000000-0000-0000-0000-000000000001', 'Alex Turner', 'techcraft@markethub.com', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 'vendor'),
-    ('b0000000-0000-0000-0000-000000000002', 'Sophia Chen', 'aurasound@markethub.com', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 'vendor'),
+    ('b0000000-0000-0000-0000-000000000001', 'Alex Turner', 'techcraft@markethub.com', '$2b$10$hzFlWYY/1Ppv4VqLiW7UIewPv9/RVcNcEdlbenEPYK4PWQOLnArDK', 'vendor'),
+    ('b0000000-0000-0000-0000-000000000002', 'Sophia Chen', 'aurasound@markethub.com', '$2b$10$hzFlWYY/1Ppv4VqLiW7UIewPv9/RVcNcEdlbenEPYK4PWQOLnArDK', 'vendor'),
     -- Customer Users
-    ('c0000000-0000-0000-0000-000000000001', 'John Doe', 'john.doe@example.com', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 'customer'),
-    ('c0000000-0000-0000-0000-000000000002', 'Emma Watson', 'emma.watson@example.com', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 'customer'),
-    ('c0000000-0000-0000-0000-000000000003', 'Michael Brown', 'michael.brown@example.com', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 'customer')
+    ('c0000000-0000-0000-0000-000000000001', 'John Doe', 'john.doe@example.com', '$2b$10$hzFlWYY/1Ppv4VqLiW7UIewPv9/RVcNcEdlbenEPYK4PWQOLnArDK', 'customer'),
+    ('c0000000-0000-0000-0000-000000000002', 'Emma Watson', 'emma.watson@example.com', '$2b$10$hzFlWYY/1Ppv4VqLiW7UIewPv9/RVcNcEdlbenEPYK4PWQOLnArDK', 'customer'),
+    ('c0000000-0000-0000-0000-000000000003', 'Michael Brown', 'michael.brown@example.com', '$2b$10$hzFlWYY/1Ppv4VqLiW7UIewPv9/RVcNcEdlbenEPYK4PWQOLnArDK', 'customer')
 ON CONFLICT (email) DO UPDATE SET
     name = EXCLUDED.name,
     password_hash = EXCLUDED.password_hash,

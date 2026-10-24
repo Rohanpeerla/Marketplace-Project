@@ -1,4 +1,4 @@
-export default function Hero() {
+export default function Hero({ onOpenAuthModal }) {
   return (
     <section id="home" className="relative overflow-hidden bg-gradient-to-b from-indigo-50/60 via-white to-slate-50 py-16 sm:py-24 border-b border-slate-200">
       
@@ -30,14 +30,16 @@ export default function Hero() {
           {/* Action CTAs */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="#products"
+              href="#auth-verification-section"
               className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-200 transition transform hover:-translate-y-0.5 text-center"
             >
-              Explore Products
+              Test RBAC Access
             </a>
             <button
               type="button"
-              onClick={() => alert('Vendor onboarding flow will be available in the upcoming phase.')}
+              onClick={() => {
+                if (onOpenAuthModal) onOpenAuthModal('register');
+              }}
               className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl shadow-sm transition text-center"
             >
               Become a Vendor
