@@ -10,7 +10,8 @@
     "db:init": "npm run db:init --prefix backend",
     "db:seed": "npm run db:seed --prefix backend",
     "search:reindex": "npm run search:reindex --prefix backend",
-    "test": "npm test --prefix backend"
+    "test": "npm test --prefix backend",
+    "test:stage7": "npm run test:stage7 --prefix backend"
   },
   "keywords": [
     "marketplace",

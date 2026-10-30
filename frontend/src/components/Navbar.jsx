@@ -7,7 +7,9 @@ export default function Navbar({
   onOpenAuthModal,
   onOpenVendorDashboard,
   onOpenAdminCategories,
+  onOpenAdminOrders,
   onOpenCart,
+  onOpenOrders,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
@@ -71,22 +73,36 @@ export default function Navbar({
             {/* Authenticated User View vs Unauthenticated Buttons */}
             {isAuthenticated && user ? (
               <div className="flex items-center space-x-3">
-                {/* Customer Role Action: Shopping Cart */}
+                {/* Customer Role Actions: Shopping Cart & My Orders */}
                 {user.role === 'customer' && (
-                  <button
-                    type="button"
-                    id="nav-cart-btn"
-                    onClick={onOpenCart}
-                    className="relative px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition flex items-center gap-1.5 shadow-xs"
-                  >
-                    <svg className="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    <span>Cart</span>
-                    <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-indigo-600 text-white min-w-[18px] text-center">
-                      {itemCount}
-                    </span>
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      id="nav-orders-btn"
+                      onClick={onOpenOrders}
+                      className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg border border-slate-200 transition flex items-center gap-1.5 shadow-xs"
+                    >
+                      <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                      <span>My Orders</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      id="nav-cart-btn"
+                      onClick={onOpenCart}
+                      className="relative px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition flex items-center gap-1.5 shadow-xs"
+                    >
+                      <svg className="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                      </svg>
+                      <span>Cart</span>
+                      <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-indigo-600 text-white min-w-[18px] text-center">
+                        {itemCount}
+                      </span>
+                    </button>
+                  </>
                 )}
 
                 {/* Vendor Role Action: Vendor Dashboard */}
@@ -101,16 +117,27 @@ export default function Navbar({
                   </button>
                 )}
 
-                {/* Admin Role Action: Manage Categories */}
+                {/* Admin Role Actions: Categories & Platform Orders */}
                 {user.role === 'admin' && (
-                  <button
-                    type="button"
-                    id="nav-admin-categories-btn"
-                    onClick={onOpenAdminCategories}
-                    className="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-purple-200 transition flex items-center gap-1.5"
-                  >
-                    <span>🛡️ Manage Categories</span>
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      id="nav-admin-orders-btn"
+                      onClick={onOpenAdminOrders}
+                      className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5"
+                    >
+                      <span>📊 Platform Orders</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      id="nav-admin-categories-btn"
+                      onClick={onOpenAdminCategories}
+                      className="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-purple-200 transition flex items-center gap-1.5"
+                    >
+                      <span>🛡️ Manage Categories</span>
+                    </button>
+                  </>
                 )}
 
                 {/* User Profile Pill */}
@@ -189,17 +216,31 @@ export default function Navbar({
           {isAuthenticated && user && (
             <div className="pt-2 border-t border-slate-100 space-y-2">
               {user.role === 'customer' && (
-                <button
-                  type="button"
-                  id="mobile-nav-cart-btn"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    if (onOpenCart) onOpenCart();
-                  }}
-                  className="w-full text-center py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs flex items-center justify-center gap-2"
-                >
-                  <span>🛒 Shopping Cart ({itemCount})</span>
-                </button>
+                <>
+                  <button
+                    type="button"
+                    id="mobile-nav-orders-btn"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (onOpenOrders) onOpenOrders();
+                    }}
+                    className="w-full text-center py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg shadow-xs flex items-center justify-center gap-2"
+                  >
+                    <span>📦 My Orders</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    id="mobile-nav-cart-btn"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (onOpenCart) onOpenCart();
+                    }}
+                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs flex items-center justify-center gap-2"
+                  >
+                    <span>🛒 Shopping Cart ({itemCount})</span>
+                  </button>
+                </>
               )}
 
               {user.role === 'vendor' && (
@@ -216,16 +257,29 @@ export default function Navbar({
               )}
 
               {user.role === 'admin' && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    if (onOpenAdminCategories) onOpenAdminCategories();
-                  }}
-                  className="w-full text-center py-2.5 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-lg shadow-xs"
-                >
-                  🛡️ Manage Categories
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (onOpenAdminOrders) onOpenAdminOrders();
+                    }}
+                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg shadow-xs"
+                  >
+                    📊 Platform Orders
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (onOpenAdminCategories) onOpenAdminCategories();
+                    }}
+                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-lg shadow-xs"
+                  >
+                    🛡️ Manage Categories
+                  </button>
+                </>
               )}
             </div>
           )}

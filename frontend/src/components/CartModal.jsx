@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 
-export default function CartModal({ isOpen, onClose }) {
+export default function CartModal({ isOpen, onClose, onCheckout }) {
   const { cart, itemCount, subtotal, items, isLoading, isMutating, updateQuantity, removeFromCart, clearCart } = useCart();
   const [updatingId, setUpdatingId] = useState(null);
 
@@ -238,12 +238,16 @@ export default function CartModal({ isOpen, onClose }) {
               </button>
               <button
                 type="button"
-                disabled
-                title="Checkout and payment gateway integration will be introduced in Stage 7"
-                className="flex-1 sm:flex-none px-5 py-2 bg-indigo-600/70 text-white text-xs font-semibold rounded-lg opacity-75 cursor-not-allowed flex items-center justify-center gap-1.5"
+                onClick={() => {
+                  onClose();
+                  if (onCheckout) onCheckout();
+                }}
+                className="flex-1 sm:flex-none px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-indigo-200 transition flex items-center justify-center gap-1.5"
               >
-                <span>Checkout</span>
-                <span className="text-[10px] bg-indigo-800/80 px-1.5 py-0.2 rounded font-normal">Stage 7</span>
+                <span>Proceed to Checkout</span>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
               </button>
             </div>
           </div>
@@ -253,3 +257,4 @@ export default function CartModal({ isOpen, onClose }) {
     </div>
   );
 }
+

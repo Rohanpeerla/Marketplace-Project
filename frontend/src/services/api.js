@@ -321,3 +321,92 @@ export const cartApi = {
     return handleResponse(res);
   },
 };
+
+/**
+ * Customer Orders & Checkout API methods (Stage 7)
+ */
+export const orderApi = {
+  checkout: async (shippingData) => {
+    const res = await fetchWithAuth('/api/orders/checkout', {
+      method: 'POST',
+      body: JSON.stringify(shippingData),
+    });
+    return handleResponse(res);
+  },
+
+  getOrders: async (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.page) query.set('page', params.page);
+    if (params.limit) query.set('limit', params.limit);
+    if (params.status) query.set('status', params.status);
+
+    const queryString = query.toString();
+    const endpoint = queryString ? `/api/orders?${queryString}` : '/api/orders';
+    const res = await fetchWithAuth(endpoint);
+    return handleResponse(res);
+  },
+
+  getOrderById: async (orderId) => {
+    const res = await fetchWithAuth(`/api/orders/${orderId}`);
+    return handleResponse(res);
+  },
+
+  cancelOrder: async (orderId) => {
+    const res = await fetchWithAuth(`/api/orders/${orderId}/cancel`, {
+      method: 'PUT',
+    });
+    return handleResponse(res);
+  },
+};
+
+/**
+ * Vendor Orders Management API methods (Stage 7)
+ */
+export const vendorOrderApi = {
+  getOrders: async (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.page) query.set('page', params.page);
+    if (params.limit) query.set('limit', params.limit);
+    if (params.status) query.set('status', params.status);
+
+    const queryString = query.toString();
+    const endpoint = queryString ? `/api/vendor/orders?${queryString}` : '/api/vendor/orders';
+    const res = await fetchWithAuth(endpoint);
+    return handleResponse(res);
+  },
+
+  getOrderById: async (orderId) => {
+    const res = await fetchWithAuth(`/api/vendor/orders/${orderId}`);
+    return handleResponse(res);
+  },
+
+  updateStatus: async (orderId, status) => {
+    const res = await fetchWithAuth(`/api/vendor/orders/${orderId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+    return handleResponse(res);
+  },
+};
+
+/**
+ * Admin Orders Overview API methods (Stage 7)
+ */
+export const adminOrderApi = {
+  getOrders: async (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.page) query.set('page', params.page);
+    if (params.limit) query.set('limit', params.limit);
+    if (params.status) query.set('status', params.status);
+
+    const queryString = query.toString();
+    const endpoint = queryString ? `/api/admin/orders?${queryString}` : '/api/admin/orders';
+    const res = await fetchWithAuth(endpoint);
+    return handleResponse(res);
+  },
+
+  getOrderById: async (orderId) => {
+    const res = await fetchWithAuth(`/api/admin/orders/${orderId}`);
+    return handleResponse(res);
+  },
+};

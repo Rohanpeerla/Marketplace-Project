@@ -9,7 +9,10 @@ import ProductSection from './components/ProductSection';
 import ProductDetailModal from './components/ProductDetailModal';
 import VendorDashboardModal from './components/VendorDashboardModal';
 import AdminCategoryModal from './components/AdminCategoryModal';
+import AdminOrdersModal from './components/AdminOrdersModal';
 import CartModal from './components/CartModal';
+import CheckoutModal from './components/CheckoutModal';
+import OrderHistoryModal from './components/OrderHistoryModal';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 
@@ -32,6 +35,11 @@ export default function App() {
 
   // Stage 6 Cart Modal State
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Stage 7 Checkout & Orders Modal States
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isOrdersOpen, setIsOrdersOpen] = useState(false);
+  const [isAdminOrdersOpen, setIsAdminOrdersOpen] = useState(false);
 
   // Stage 4 Modal States
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -132,7 +140,9 @@ export default function App() {
             onOpenAuthModal={openAuthModal}
             onOpenVendorDashboard={() => setIsVendorDashboardOpen(true)}
             onOpenAdminCategories={() => setIsAdminCategoryOpen(true)}
+            onOpenAdminOrders={() => setIsAdminOrdersOpen(true)}
             onOpenCart={() => setIsCartOpen(true)}
+            onOpenOrders={() => setIsOrdersOpen(true)}
           />
 
           {/* Main Content Area */}
@@ -179,6 +189,20 @@ export default function App() {
           <CartModal
             isOpen={isCartOpen}
             onClose={() => setIsCartOpen(false)}
+            onCheckout={() => setIsCheckoutOpen(true)}
+          />
+
+          {/* Checkout & Shipping Modal (Customer Stage 7) */}
+          <CheckoutModal
+            isOpen={isCheckoutOpen}
+            onClose={() => setIsCheckoutOpen(false)}
+            onOpenOrders={() => setIsOrdersOpen(true)}
+          />
+
+          {/* Customer Order History & Cancellation Modal (Customer Stage 7) */}
+          <OrderHistoryModal
+            isOpen={isOrdersOpen}
+            onClose={() => setIsOrdersOpen(false)}
           />
 
           {/* Product Details Modal (Customer Browsing) */}
@@ -190,7 +214,7 @@ export default function App() {
             onOpenAuthModal={openAuthModal}
           />
 
-          {/* Vendor Dashboard Modal (Vendor Only) */}
+          {/* Vendor Dashboard Modal (Vendor Only: Products + Orders + Profile) */}
           <VendorDashboardModal
             isOpen={isVendorDashboardOpen}
             onClose={() => {
@@ -204,6 +228,12 @@ export default function App() {
             isOpen={isAdminCategoryOpen}
             onClose={() => setIsAdminCategoryOpen(false)}
             onCategoriesUpdated={handleCategoriesUpdated}
+          />
+
+          {/* Admin Orders Modal (Admin Only: Platform Overview) */}
+          <AdminOrdersModal
+            isOpen={isAdminOrdersOpen}
+            onClose={() => setIsAdminOrdersOpen(false)}
           />
         </div>
       </CartProvider>

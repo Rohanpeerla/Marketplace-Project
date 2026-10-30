@@ -1,16 +1,46 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { vendorApi, productApi, categoryApi } from '../services/api';
+import { vendorApi, productApi, categoryApi, vendorOrderApi } from '../services/api';
+
+const VENDOR_TRANSITIONS = {
+  pending: ['confirmed', 'processing', 'cancelled'],
+  placed: ['confirmed', 'processing', 'packed', 'cancelled'],
+  confirmed: ['processing', 'shipped', 'cancelled'],
+  packed: ['shipped', 'cancelled'],
+  processing: ['shipped'],
+  shipped: ['delivered'],
+  delivered: [],
+  cancelled: [],
+};
+
+const ORDER_STATUS_CLASSES = {
+  pending: 'bg-amber-100 text-amber-800 border-amber-200',
+  placed: 'bg-blue-100 text-blue-800 border-blue-200',
+  confirmed: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+  processing: 'bg-purple-100 text-purple-800 border-purple-200',
+  packed: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+  shipped: 'bg-blue-100 text-blue-800 border-blue-200',
+  delivered: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  cancelled: 'bg-rose-100 text-rose-800 border-rose-200',
+};
 
 export default function VendorDashboardModal({ isOpen, onClose }) {
   const { user, refreshProfile } = useAuth();
 
-  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'profile'
+  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'orders' | 'profile'
   const [vendorProfile, setVendorProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState(null);
   const [profileError, setProfileError] = useState(null);
+
+  // Orders State (Stage 7)
+  const [vendorOrders, setVendorOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [orderError, setOrderError] = useState(null);
+  const [orderSuccess, setOrderSuccess] = useState(null);
+  const [updatingOrderId, setUpdatingOrderId] = useState(null);
+  const [selectedOrderDetails, setSelectedOrderDetails] = useState(null);
 
   // Profile Form Fields
   const [businessName, setBusinessName] = useState('');
@@ -89,11 +119,53 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
     }
   }, []);
 
+  // Load Vendor Orders (Stage 7)
+  const loadVendorOrders = useCallback(async () => {
+    setLoadingOrders(true);
+    setOrderError(null);
+    try {
+      const res = await vendorOrderApi.getOrders();
+      if (res.success && Array.isArray(res.orders)) {
+        setVendorOrders(res.orders);
+      }
+    } catch (err) {
+      setOrderError(err.message || 'Failed to fetch vendor orders.');
+    } finally {
+      setLoadingOrders(false);
+    }
+  }, []);
+
+  // Update Order Status (Stage 7)
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    try {
+      setUpdatingOrderId(orderId);
+      setOrderError(null);
+      await vendorOrderApi.updateStatus(orderId, newStatus);
+      setOrderSuccess(`Order status updated to "${newStatus}"`);
+      await loadVendorOrders();
+      if (selectedOrderDetails && selectedOrderDetails.id === orderId) {
+        const refreshed = await vendorOrderApi.getOrderById(orderId);
+        setSelectedOrderDetails(refreshed.order);
+      }
+    } catch (err) {
+      setOrderError(err.message || 'Failed to update order status.');
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
   useEffect(() => {
     if (isOpen && user?.role === 'vendor') {
       loadProfile();
+      loadVendorOrders();
     }
-  }, [isOpen, user, loadProfile]);
+  }, [isOpen, user, loadProfile, loadVendorOrders]);
+
+  useEffect(() => {
+    if (activeTab === 'orders') {
+      loadVendorOrders();
+    }
+  }, [activeTab, loadVendorOrders]);
 
   useEffect(() => {
     if (vendorProfile?.id) {
@@ -356,6 +428,32 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
           </div>
         )}
 
+        {orderSuccess && (
+          <div className="bg-emerald-50 border-b border-emerald-200 px-6 py-2.5 text-xs text-emerald-800 flex items-center justify-between">
+            <span>✅ {orderSuccess}</span>
+            <button
+              type="button"
+              onClick={() => setOrderSuccess(null)}
+              className="text-emerald-600 hover:text-emerald-800 font-bold"
+            >
+              &times;
+            </button>
+          </div>
+        )}
+
+        {orderError && (
+          <div className="bg-rose-50 border-b border-rose-200 px-6 py-2.5 text-xs text-rose-800 flex items-center justify-between">
+            <span>❌ {orderError}</span>
+            <button
+              type="button"
+              onClick={() => setOrderError(null)}
+              className="text-rose-600 hover:text-rose-800 font-bold"
+            >
+              &times;
+            </button>
+          </div>
+        )}
+
         {/* Navigation Tabs */}
         <div className="flex border-b border-slate-200 bg-slate-50 px-6 gap-6 text-sm font-semibold">
           <button
@@ -370,6 +468,21 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
             <span>📦 My Products</span>
             <span className="px-2 py-0.2 rounded-full text-xs bg-slate-200 text-slate-700">
               {products.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('orders')}
+            className={`py-3.5 border-b-2 transition flex items-center gap-2 ${
+              activeTab === 'orders'
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <span>📋 Customer Orders</span>
+            <span className="px-2 py-0.2 rounded-full text-xs bg-indigo-100 text-indigo-700 font-bold">
+              {vendorOrders.length}
             </span>
           </button>
 
@@ -650,6 +763,182 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                   </button>
                 </div>
               </form>
+            </div>
+          )}
+
+          {/* TAB 3: CUSTOMER ORDERS (STAGE 7) */}
+          {activeTab === 'orders' && (
+            <div className="space-y-4">
+              {loadingOrders ? (
+                <div className="py-16 text-center">
+                  <div className="w-7 h-7 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                  <p className="text-xs text-slate-500">Loading incoming orders...</p>
+                </div>
+              ) : selectedOrderDetails ? (
+                /* Selected Order Details */
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOrderDetails(null)}
+                      className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                    >
+                      ← Back to All Orders
+                    </button>
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${ORDER_STATUS_CLASSES[selectedOrderDetails.order_status] || 'bg-slate-100 text-slate-700'}`}>
+                      {selectedOrderDetails.order_status}
+                    </span>
+                  </div>
+
+                  {/* Summary meta */}
+                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div>
+                      <span className="text-slate-500 block">Order ID</span>
+                      <span className="font-mono font-bold text-slate-800 text-[11px] truncate block" title={selectedOrderDetails.id}>
+                        {selectedOrderDetails.id}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block">Customer</span>
+                      <span className="font-semibold text-slate-800 truncate block">
+                        {selectedOrderDetails.customer_name || 'Customer'}
+                      </span>
+                      <span className="text-[10px] text-slate-400 block truncate">{selectedOrderDetails.customer_email}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block">Order Placed</span>
+                      <span className="font-medium text-slate-800">
+                        {new Date(selectedOrderDetails.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block">Order Total</span>
+                      <span className="text-base font-extrabold text-indigo-600 block">
+                        ${Number(selectedOrderDetails.total_amount).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Shipping Address */}
+                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs">
+                    <span className="font-semibold text-slate-700 block mb-0.5">Shipping Destination:</span>
+                    <span className="text-slate-600">{selectedOrderDetails.shipping_address}</span>
+                  </div>
+
+                  {/* Line Items */}
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Ordered Items</h4>
+                    <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
+                      {selectedOrderDetails.items && selectedOrderDetails.items.map((item) => (
+                        <div key={item.id} className="p-3 flex items-center justify-between text-xs hover:bg-slate-50">
+                          <div>
+                            <div className="font-bold text-slate-900">{item.product_name || 'Product'}</div>
+                            <div className="text-slate-500 text-[11px]">Qty: {item.quantity} × ${Number(item.price).toFixed(2)}</div>
+                          </div>
+                          <div className="font-extrabold text-slate-900">
+                            ${Number(item.subtotal || (item.price * item.quantity)).toFixed(2)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Status update transitions */}
+                  {VENDOR_TRANSITIONS[selectedOrderDetails.order_status]?.length > 0 && (
+                    <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
+                      <span className="text-xs text-slate-600 font-medium">Update Fulfillment Status:</span>
+                      <div className="flex items-center gap-2">
+                        {VENDOR_TRANSITIONS[selectedOrderDetails.order_status].map((nextSt) => (
+                          <button
+                            key={nextSt}
+                            type="button"
+                            disabled={updatingOrderId === selectedOrderDetails.id}
+                            onClick={() => handleUpdateOrderStatus(selectedOrderDetails.id, nextSt)}
+                            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-xs transition capitalize disabled:opacity-50"
+                          >
+                            Mark as {nextSt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : vendorOrders.length === 0 ? (
+                <div className="py-16 text-center space-y-3">
+                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-2xl text-slate-400">
+                    📋
+                  </div>
+                  <h4 className="text-sm font-bold text-slate-800">No customer orders yet</h4>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    When customers purchase your products, their orders will appear here for fulfillment and status updates.
+                  </p>
+                </div>
+              ) : (
+                /* Orders List */
+                <div className="border border-slate-200 rounded-xl overflow-hidden">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 text-slate-600 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-200">
+                      <tr>
+                        <th className="py-2.5 px-3">Order ID</th>
+                        <th className="py-2.5 px-3">Customer</th>
+                        <th className="py-2.5 px-3">Date</th>
+                        <th className="py-2.5 px-3">Total</th>
+                        <th className="py-2.5 px-3">Status</th>
+                        <th className="py-2.5 px-3 text-right">Quick Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {vendorOrders.map((ord) => {
+                        const allowedTransitions = VENDOR_TRANSITIONS[ord.order_status] || [];
+                        const nextMainStatus = allowedTransitions.find((s) => s !== 'cancelled');
+
+                        return (
+                          <tr key={ord.id} className="hover:bg-slate-50/80 transition cursor-pointer" onClick={() => setSelectedOrderDetails(ord)}>
+                            <td className="py-3 px-3 font-mono text-indigo-600 font-bold">
+                              #{ord.id.slice(0, 8)}...
+                            </td>
+                            <td className="py-3 px-3 text-slate-800 font-medium">
+                              {ord.customer_name || 'Customer'}
+                            </td>
+                            <td className="py-3 px-3 text-slate-500">
+                              {new Date(ord.created_at).toLocaleDateString()}
+                            </td>
+                            <td className="py-3 px-3 font-extrabold text-slate-900">
+                              ${Number(ord.total_amount).toFixed(2)}
+                            </td>
+                            <td className="py-3 px-3">
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${ORDER_STATUS_CLASSES[ord.order_status] || 'bg-slate-100 text-slate-700'}`}>
+                                {ord.order_status}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 text-right" onClick={(e) => e.stopPropagation()}>
+                              <div className="inline-flex items-center gap-1.5">
+                                {nextMainStatus && (
+                                  <button
+                                    type="button"
+                                    disabled={updatingOrderId === ord.id}
+                                    onClick={() => handleUpdateOrderStatus(ord.id, nextMainStatus)}
+                                    className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded text-[11px] font-semibold transition capitalize disabled:opacity-50"
+                                  >
+                                    → {nextMainStatus}
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedOrderDetails(ord)}
+                                  className="px-2.5 py-1 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 rounded text-[11px] font-semibold transition"
+                                >
+                                  Details
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
         </div>

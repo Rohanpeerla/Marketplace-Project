@@ -152,23 +152,34 @@ MarketHub implements a high-performance **cache-aside shopping cart** backed by 
 - `GET /api/health/search` - Elasticsearch cluster health, version, and latency
 - `GET /api/health/redis` - Redis cache connection health and latency
 
-### 2. Shopping Cart (Stage 6)
+### 2. Checkout & Order Management (Stage 7)
+- `POST /api/orders/checkout` - Atomic multi-vendor checkout (`{ shippingAddress, city, state, postalCode, phone }`)
+- `GET /api/orders` - Customer order history with pagination & status filtering
+- `GET /api/orders/:id` - Customer order detail (verified customer ownership)
+- `PUT /api/orders/:id/cancel` - Cancel order (`pending`, `placed`, `confirmed`), restores stock atomically
+- `GET /api/vendor/orders` - Vendor's isolated incoming orders
+- `GET /api/vendor/orders/:id` - Vendor order detail (verified vendor ownership)
+- `PUT /api/vendor/orders/:id/status` - Vendor updates order status (`{ status }`) adhering to valid transition lifecycle
+- `GET /api/admin/orders` - Platform-wide order list across all vendors (Admin only)
+- `GET /api/admin/orders/:id` - Platform order detail with full customer & vendor metadata (Admin only)
+
+### 3. Shopping Cart (Stage 6)
 - `GET /api/cart` - Retrieve current customer's cart (Redis cache-aside)
 - `POST /api/cart/items` - Add product to cart (`{ productId, quantity }`)
 - `PUT /api/cart/items/:productId` - Update item quantity (`{ quantity }`)
 - `DELETE /api/cart/items/:productId` - Remove single product from cart
 - `DELETE /api/cart` - Clear entire cart
 
-### 3. Search & Catalog (Stage 5)
+### 4. Search & Catalog (Stage 5)
 - `GET /api/search/products` - Search and filter products using Elasticsearch
   - Query params: `q`, `category_id`, `vendor_id`, `min_price`, `max_price`, `sort`, `page`, `limit`
 
-### 4. Authentication & RBAC (Stage 3)
+### 5. Authentication & RBAC (Stage 3)
 - `POST /api/auth/register` - Register customer or vendor account
 - `POST /api/auth/login` - Authenticate user and receive JWT
 - `GET /api/auth/me` - Retrieve current user session and vendor profile
 
-### 5. Vendor & Product Management (Stage 4)
+### 6. Vendor & Product Management (Stage 4)
 - `GET /api/vendors/me` - Authenticated vendor profile
 - `PUT /api/vendors/me` - Update vendor business details
 - `GET /api/vendors` - Public approved vendor list
@@ -188,7 +199,7 @@ MarketHub implements a high-performance **cache-aside shopping cart** backed by 
 
 ## Running Automated Test Suites
 
-Run the complete 4-stage test suite (Stage 3 Auth + Stage 4 Products/Vendors + Stage 5 Elasticsearch + Stage 6 Redis/Cart):
+Run the complete 5-stage regression test suite (Stage 3 Auth + Stage 4 Products/Vendors + Stage 5 Elasticsearch + Stage 6 Redis/Cart + Stage 7 Checkout/Orders):
 ```bash
 npm test
 ```
@@ -199,6 +210,7 @@ npm run test:auth    # Stage 3 Auth & RBAC (25 tests)
 npm run test:stage4  # Stage 4 Vendor & Product CRUD (39 tests)
 npm run test:stage5  # Stage 5 Elasticsearch Search & Sync (42 tests)
 npm run test:stage6  # Stage 6 Redis + Shopping Cart (56 tests)
+npm run test:stage7  # Stage 7 Checkout & Order Management (70 tests)
 ```
 
 ---

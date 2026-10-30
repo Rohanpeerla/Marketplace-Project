@@ -166,17 +166,19 @@ CREATE TRIGGER trg_cart_items_updated_at
 CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+    vendor_id UUID REFERENCES vendors(id) ON DELETE RESTRICT,
     total_amount NUMERIC(12,2) NOT NULL CHECK (total_amount >= 0),
     discount_amount NUMERIC(12,2) NOT NULL DEFAULT 0.00 CHECK (discount_amount >= 0),
     platform_commission NUMERIC(12,2) NOT NULL DEFAULT 0.00 CHECK (platform_commission >= 0),
     payment_status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed', 'refunded')),
-    order_status VARCHAR(20) NOT NULL DEFAULT 'placed' CHECK (order_status IN ('placed', 'packed', 'shipped', 'delivered', 'cancelled')),
+    order_status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (order_status IN ('pending', 'confirmed', 'processing', 'placed', 'packed', 'shipped', 'delivered', 'cancelled')),
     shipping_address TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_vendor_id ON orders(vendor_id);
 CREATE INDEX IF NOT EXISTS idx_orders_order_status ON orders(order_status);
 CREATE INDEX IF NOT EXISTS idx_orders_payment_status ON orders(payment_status);
 
