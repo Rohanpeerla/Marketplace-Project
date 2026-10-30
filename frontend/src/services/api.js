@@ -61,7 +61,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
   const headers = new Headers(options.headers || {});
 
-  // Add JSON Content-Type if sending a body
+  // Add JSON Content-Type if sending a body and not FormData
   if (options.body && typeof options.body === 'string' && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
@@ -79,61 +79,178 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 };
 
 /**
+ * Helper to process JSON responses safely
+ */
+const handleResponse = async (res) => {
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.message || `Request failed with status ${res.status}`);
+  }
+  return data;
+};
+
+/**
  * Authentication API methods
  */
 export const authApi = {
-  /**
-   * Register a customer or vendor
-   */
   register: async (userData) => {
     const res = await fetchWithAuth('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.message || `Registration failed (HTTP ${res.status})`);
-    }
-    return data;
+    return handleResponse(res);
   },
 
-  /**
-   * Authenticate user credentials
-   */
   login: async ({ email, password }) => {
     const res = await fetchWithAuth('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.message || `Login failed (HTTP ${res.status})`);
-    }
-    return data;
+    return handleResponse(res);
   },
 
-  /**
-   * Fetch current user profile
-   */
   getMe: async () => {
     const res = await fetchWithAuth('/api/auth/me');
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.message || `Profile request failed (HTTP ${res.status})`);
-    }
-    return data;
+    return handleResponse(res);
   },
 
-  /**
-   * Test role-protected endpoints
-   */
   testEndpoint: async (path) => {
     const res = await fetchWithAuth(path);
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     return {
       status: res.status,
       ok: res.ok,
       data,
     };
+  },
+};
+
+/**
+ * Category Management API methods
+ */
+export const categoryApi = {
+  getAll: async () => {
+    const res = await fetchWithAuth('/api/categories');
+    return handleResponse(res);
+  },
+
+  getById: async (id) => {
+    const res = await fetchWithAuth(`/api/categories/${id}`);
+    return handleResponse(res);
+  },
+
+  create: async (data) => {
+    const res = await fetchWithAuth('/api/categories', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  update: async (id, data) => {
+    const res = await fetchWithAuth(`/api/categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  delete: async (id) => {
+    const res = await fetchWithAuth(`/api/categories/${id}`, {
+      method: 'DELETE',
+    });
+    return handleResponse(res);
+  },
+};
+
+/**
+ * Product Management API methods
+ */
+export const productApi = {
+  getAll: async (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.page) query.set('page', params.page);
+    if (params.limit) query.set('limit', params.limit);
+    if (params.categoryId) query.set('category_id', params.categoryId);
+    if (params.vendorId) query.set('vendor_id', params.vendorId);
+    if (params.minPrice) query.set('min_price', params.minPrice);
+    if (params.maxPrice) query.set('max_price', params.maxPrice);
+    if (params.status) query.set('status', params.status);
+    if (params.search) query.set('search', params.search);
+
+    const queryString = query.toString();
+    const endpoint = queryString ? `/api/products?${queryString}` : '/api/products';
+    const res = await fetchWithAuth(endpoint);
+    return handleResponse(res);
+  },
+
+  getById: async (id) => {
+    const res = await fetchWithAuth(`/api/products/${id}`);
+    return handleResponse(res);
+  },
+
+  create: async (data) => {
+    const res = await fetchWithAuth('/api/products', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  update: async (id, data) => {
+    const res = await fetchWithAuth(`/api/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  delete: async (id) => {
+    const res = await fetchWithAuth(`/api/products/${id}`, {
+      method: 'DELETE',
+    });
+    return handleResponse(res);
+  },
+
+  addImage: async (productId, imageData) => {
+    const res = await fetchWithAuth(`/api/products/${productId}/images`, {
+      method: 'POST',
+      body: JSON.stringify(imageData),
+    });
+    return handleResponse(res);
+  },
+
+  removeImage: async (productId, imageId) => {
+    const res = await fetchWithAuth(`/api/products/${productId}/images/${imageId}`, {
+      method: 'DELETE',
+    });
+    return handleResponse(res);
+  },
+};
+
+/**
+ * Vendor Profile API methods
+ */
+export const vendorApi = {
+  getMe: async () => {
+    const res = await fetchWithAuth('/api/vendors/me');
+    return handleResponse(res);
+  },
+
+  updateMe: async (data) => {
+    const res = await fetchWithAuth('/api/vendors/me', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  listAll: async (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.status) query.set('status', params.status);
+    const queryString = query.toString();
+    const endpoint = queryString ? `/api/vendors?${queryString}` : '/api/vendors';
+    const res = await fetchWithAuth(endpoint);
+    return handleResponse(res);
   },
 };

@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-export default function Navbar({ apiStatus, onOpenAuthModal }) {
+export default function Navbar({
+  apiStatus,
+  onOpenAuthModal,
+  onOpenVendorDashboard,
+  onOpenAdminCategories,
+}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
 
@@ -45,18 +50,17 @@ export default function Navbar({ apiStatus, onOpenAuthModal }) {
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
             <a href="#home" className="text-indigo-600 hover:text-indigo-700 transition">Home</a>
+            <a href="#products" className="hover:text-indigo-600 transition">Products</a>
             <a href="#auth-verification-section" className="hover:text-indigo-600 transition flex items-center gap-1.5">
               <span>RBAC Testing</span>
               <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">Stage 3</span>
             </a>
-            <a href="#products" className="hover:text-indigo-600 transition">Products</a>
-            <a href="#vendors" className="hover:text-indigo-600 transition">Vendors</a>
           </nav>
 
-          {/* Actions & Auth */}
+          {/* Actions & Role-Based Control Buttons */}
           <div className="hidden md:flex items-center space-x-3">
             {/* API Health Indicator Badge */}
-            <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 mr-2">
+            <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 mr-1">
               <span className={`w-2 h-2 rounded-full ${apiStatus?.success ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`}></span>
               <span>{apiStatus?.success ? 'Backend Online' : 'Connecting...'}</span>
             </div>
@@ -64,6 +68,31 @@ export default function Navbar({ apiStatus, onOpenAuthModal }) {
             {/* Authenticated User View vs Unauthenticated Buttons */}
             {isAuthenticated && user ? (
               <div className="flex items-center space-x-3">
+                {/* Vendor Role Action: Vendor Dashboard */}
+                {user.role === 'vendor' && (
+                  <button
+                    type="button"
+                    id="nav-vendor-dashboard-btn"
+                    onClick={onOpenVendorDashboard}
+                    className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-emerald-200 transition flex items-center gap-1.5"
+                  >
+                    <span>🏪 Vendor Dashboard</span>
+                  </button>
+                )}
+
+                {/* Admin Role Action: Manage Categories */}
+                {user.role === 'admin' && (
+                  <button
+                    type="button"
+                    id="nav-admin-categories-btn"
+                    onClick={onOpenAdminCategories}
+                    className="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-purple-200 transition flex items-center gap-1.5"
+                  >
+                    <span>🛡️ Manage Categories</span>
+                  </button>
+                )}
+
+                {/* User Profile Pill */}
                 <div className="flex items-center space-x-2 pl-2 pr-3 py-1 bg-slate-50 border border-slate-200 rounded-lg">
                   <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
                     {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
@@ -132,9 +161,40 @@ export default function Navbar({ apiStatus, onOpenAuthModal }) {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-3">
           <a href="#home" className="block text-base font-medium text-indigo-600">Home</a>
-          <a href="#auth-verification-section" className="block text-base font-medium text-slate-700">RBAC Testing (Stage 3)</a>
           <a href="#products" className="block text-base font-medium text-slate-700">Products</a>
-          <a href="#vendors" className="block text-base font-medium text-slate-700">Vendors</a>
+          <a href="#auth-verification-section" className="block text-base font-medium text-slate-700">RBAC Testing (Stage 3)</a>
+
+          {/* Mobile Role Controls */}
+          {isAuthenticated && user && (
+            <div className="pt-2 border-t border-slate-100 space-y-2">
+              {user.role === 'vendor' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    if (onOpenVendorDashboard) onOpenVendorDashboard();
+                  }}
+                  className="w-full text-center py-2.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-xs"
+                >
+                  🏪 Vendor Dashboard
+                </button>
+              )}
+
+              {user.role === 'admin' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    if (onOpenAdminCategories) onOpenAdminCategories();
+                  }}
+                  className="w-full text-center py-2.5 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-lg shadow-xs"
+                >
+                  🛡️ Manage Categories
+                </button>
+              )}
+            </div>
+          )}
+
           <div className="pt-3 border-t border-slate-100 flex flex-col space-y-2">
             {isAuthenticated && user ? (
               <div className="space-y-2">

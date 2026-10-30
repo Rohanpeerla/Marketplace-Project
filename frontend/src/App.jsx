@@ -5,6 +5,9 @@ import Hero from './components/Hero';
 import AuthTestCard from './components/AuthTestCard';
 import BackendStatusCard from './components/BackendStatusCard';
 import ProductSection from './components/ProductSection';
+import ProductDetailModal from './components/ProductDetailModal';
+import VendorDashboardModal from './components/VendorDashboardModal';
+import AdminCategoryModal from './components/AdminCategoryModal';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 
@@ -21,9 +24,27 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState('login');
 
+  // Stage 4 Modal States
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isProductDetailOpen, setIsProductDetailOpen] = useState(false);
+  const [isVendorDashboardOpen, setIsVendorDashboardOpen] = useState(false);
+  const [isAdminCategoryOpen, setIsAdminCategoryOpen] = useState(false);
+
+  // Key to force refresh ProductSection when categories or products change
+  const [catalogRefreshKey, setCatalogRefreshKey] = useState(0);
+
   const openAuthModal = (tab = 'login') => {
     setAuthModalTab(tab);
     setIsAuthModalOpen(true);
+  };
+
+  const handleViewProduct = (product) => {
+    setSelectedProduct(product);
+    setIsProductDetailOpen(true);
+  };
+
+  const handleCategoriesUpdated = () => {
+    setCatalogRefreshKey((prev) => prev + 1);
   };
 
   const fetchHealthChecks = async () => {
@@ -61,7 +82,7 @@ export default function App() {
       }
       const dataDb = await resDb.json();
       setDbStatus(dataDb);
-    } catch (err) {
+    } catch {
       setDbError('Database check could not be completed');
       setDbStatus(null);
     } finally {
@@ -77,7 +98,12 @@ export default function App() {
     <AuthProvider>
       <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
         {/* Top Navigation */}
-        <Navbar apiStatus={apiStatus} onOpenAuthModal={openAuthModal} />
+        <Navbar
+          apiStatus={apiStatus}
+          onOpenAuthModal={openAuthModal}
+          onOpenVendorDashboard={() => setIsVendorDashboardOpen(true)}
+          onOpenAdminCategories={() => setIsAdminCategoryOpen(true)}
+        />
 
         {/* Main Content Area */}
         <main className="flex-1">
@@ -98,8 +124,11 @@ export default function App() {
             onRefresh={fetchHealthChecks}
           />
 
-          {/* Product Marketplace Placeholder Section */}
-          <ProductSection />
+          {/* Product Marketplace Catalog Section */}
+          <ProductSection
+            key={catalogRefreshKey}
+            onViewProduct={handleViewProduct}
+          />
         </main>
 
         {/* Footer */}
@@ -110,6 +139,29 @@ export default function App() {
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
           initialTab={authModalTab}
+        />
+
+        {/* Product Details Modal (Customer Browsing) */}
+        <ProductDetailModal
+          product={selectedProduct}
+          isOpen={isProductDetailOpen}
+          onClose={() => setIsProductDetailOpen(false)}
+        />
+
+        {/* Vendor Dashboard Modal (Vendor Only) */}
+        <VendorDashboardModal
+          isOpen={isVendorDashboardOpen}
+          onClose={() => {
+            setIsVendorDashboardOpen(false);
+            setCatalogRefreshKey((prev) => prev + 1);
+          }}
+        />
+
+        {/* Admin Category Management Modal (Admin Only) */}
+        <AdminCategoryModal
+          isOpen={isAdminCategoryOpen}
+          onClose={() => setIsAdminCategoryOpen(false)}
+          onCategoriesUpdated={handleCategoriesUpdated}
         />
       </div>
     </AuthProvider>
