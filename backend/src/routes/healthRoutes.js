@@ -3,6 +3,7 @@ const {
   getHealthStatus,
   getDatabaseHealth,
   getSearchHealth,
+  getRedisHealth,
 } = require('../controllers/healthController');
 
 const router = express.Router();
@@ -27,5 +28,12 @@ router.get('/db', getDatabaseHealth);
  * @access  Public
  */
 router.get('/search', getSearchHealth);
+
+/**
+ * @route   GET /api/health/redis
+ * @desc    Get Redis cache connection health status
+ * @access  Public
+ */
+router.get('/redis', getRedisHealth);
 
 module.exports = router;

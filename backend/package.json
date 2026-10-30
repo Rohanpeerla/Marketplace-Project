@@ -9,10 +9,11 @@
     "db:init": "node database/initDb.js",
     "db:seed": "node database/seedDb.js",
     "search:reindex": "node scripts/reindexProducts.js",
-    "test": "node scripts/verifyAuth.js && node scripts/verifyStage4.js && node scripts/verifyStage5.js",
+    "test": "node scripts/verifyAuth.js && node scripts/verifyStage4.js && node scripts/verifyStage5.js && node scripts/verifyStage6.js",
     "test:auth": "node scripts/verifyAuth.js",
     "test:stage4": "node scripts/verifyStage4.js",
-    "test:stage5": "node scripts/verifyStage5.js"
+    "test:stage5": "node scripts/verifyStage5.js",
+    "test:stage6": "node scripts/verifyStage6.js"
   },
   "keywords": [
     "express",
@@ -29,7 +30,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "redis": "^6.3.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

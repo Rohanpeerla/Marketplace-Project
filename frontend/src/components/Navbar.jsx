@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 export default function Navbar({
   apiStatus,
   onOpenAuthModal,
   onOpenVendorDashboard,
   onOpenAdminCategories,
+  onOpenCart,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const { itemCount } = useCart();
 
   const getRoleBadgeClass = (role) => {
     switch (role) {
@@ -68,6 +71,24 @@ export default function Navbar({
             {/* Authenticated User View vs Unauthenticated Buttons */}
             {isAuthenticated && user ? (
               <div className="flex items-center space-x-3">
+                {/* Customer Role Action: Shopping Cart */}
+                {user.role === 'customer' && (
+                  <button
+                    type="button"
+                    id="nav-cart-btn"
+                    onClick={onOpenCart}
+                    className="relative px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition flex items-center gap-1.5 shadow-xs"
+                  >
+                    <svg className="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span>Cart</span>
+                    <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-indigo-600 text-white min-w-[18px] text-center">
+                      {itemCount}
+                    </span>
+                  </button>
+                )}
+
                 {/* Vendor Role Action: Vendor Dashboard */}
                 {user.role === 'vendor' && (
                   <button
@@ -167,6 +188,20 @@ export default function Navbar({
           {/* Mobile Role Controls */}
           {isAuthenticated && user && (
             <div className="pt-2 border-t border-slate-100 space-y-2">
+              {user.role === 'customer' && (
+                <button
+                  type="button"
+                  id="mobile-nav-cart-btn"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    if (onOpenCart) onOpenCart();
+                  }}
+                  className="w-full text-center py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs flex items-center justify-center gap-2"
+                >
+                  <span>🛒 Shopping Cart ({itemCount})</span>
+                </button>
+              )}
+
               {user.role === 'vendor' && (
                 <button
                   type="button"

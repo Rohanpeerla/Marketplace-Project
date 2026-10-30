@@ -281,3 +281,43 @@ export const searchApi = {
     return handleResponse(res);
   },
 };
+
+/**
+ * Shopping Cart API methods (Redis + PostgreSQL)
+ */
+export const cartApi = {
+  getCart: async () => {
+    const res = await fetchWithAuth('/api/cart');
+    return handleResponse(res);
+  },
+
+  addItem: async (productId, quantity = 1) => {
+    const res = await fetchWithAuth('/api/cart/items', {
+      method: 'POST',
+      body: JSON.stringify({ productId, quantity }),
+    });
+    return handleResponse(res);
+  },
+
+  updateItem: async (productId, quantity) => {
+    const res = await fetchWithAuth(`/api/cart/items/${productId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ quantity }),
+    });
+    return handleResponse(res);
+  },
+
+  removeItem: async (productId) => {
+    const res = await fetchWithAuth(`/api/cart/items/${productId}`, {
+      method: 'DELETE',
+    });
+    return handleResponse(res);
+  },
+
+  clearCart: async () => {
+    const res = await fetchWithAuth('/api/cart', {
+      method: 'DELETE',
+    });
+    return handleResponse(res);
+  },
+};

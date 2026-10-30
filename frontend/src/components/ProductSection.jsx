@@ -1,7 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { searchApi, productApi, categoryApi } from '../services/api';
+import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
-export default function ProductSection({ onViewProduct }) {
+export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
+  const { addToCart } = useCart();
+  const { user, isAuthenticated } = useAuth();
+  const [addingId, setAddingId] = useState(null);
+  const [addedId, setAddedId] = useState(null);
+  const [cartNotification, setCartNotification] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -117,6 +124,33 @@ export default function ProductSection({ onViewProduct }) {
     }
   };
 
+  const handleAddToCart = async (product, e) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      if (onOpenAuthModal) onOpenAuthModal('login');
+      return;
+    }
+    if (user?.role !== 'customer') {
+      setCartNotification({ type: 'error', message: 'Cart is available for customer accounts.' });
+      setTimeout(() => setCartNotification(null), 3000);
+      return;
+    }
+    setAddingId(product.id);
+    setCartNotification(null);
+    try {
+      await addToCart(product.id, 1);
+      setAddedId(product.id);
+      setCartNotification({ type: 'success', message: `Added "${product.name}" to cart!` });
+      setTimeout(() => setAddedId(null), 2000);
+      setTimeout(() => setCartNotification(null), 3500);
+    } catch (err) {
+      setCartNotification({ type: 'error', message: err.message });
+      setTimeout(() => setCartNotification(null), 4000);
+    } finally {
+      setAddingId(null);
+    }
+  };
+
   return (
     <section id="products" className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -193,6 +227,29 @@ export default function ProductSection({ onViewProduct }) {
             </button>
           </div>
         </div>
+
+        {/* Live Cart Notification Toast */}
+        {cartNotification && (
+          <div
+            className={`mb-6 p-3 rounded-xl border text-xs font-semibold flex items-center justify-between transition animate-in fade-in slide-in-from-top-2 ${
+              cartNotification.type === 'success'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                : 'bg-rose-50 border-rose-200 text-rose-800'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <span>{cartNotification.type === 'success' ? '🛒' : '⚠️'}</span>
+              <span>{cartNotification.message}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setCartNotification(null)}
+              className="text-slate-400 hover:text-slate-600 p-1"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* Category Filter Pills */}
         <div className="flex flex-wrap gap-2 mb-8">
@@ -374,14 +431,34 @@ export default function ProductSection({ onViewProduct }) {
                         </button>
                         <button
                           type="button"
-                          disabled
-                          title="Cart & universal checkout available in Stage 6"
-                          className="px-3.5 py-2 bg-slate-900/80 text-white text-xs font-semibold rounded-lg opacity-60 cursor-not-allowed flex items-center gap-1"
+                          disabled={isOutOfStock || addingId === product.id}
+                          onClick={(e) => handleAddToCart(product, e)}
+                          title={isOutOfStock ? 'Item is out of stock' : 'Add 1 item to cart'}
+                          className={`px-3.5 py-2 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition ${
+                            isOutOfStock
+                              ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                              : addedId === product.id
+                              ? 'bg-emerald-600 text-white shadow-xs'
+                              : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-200'
+                          }`}
                         >
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                          </svg>
-                          Add
+                          {addingId === product.id ? (
+                            <span>Adding...</span>
+                          ) : addedId === product.id ? (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span>Added</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                              </svg>
+                              <span>Add</span>
+                            </>
+                          )}
                         </button>
                       </div>
                     </div>

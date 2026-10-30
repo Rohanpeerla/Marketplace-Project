@@ -1,5 +1,22 @@
 const { checkHealth } = require('../config/db');
 const { checkEsHealth } = require('../config/elasticsearch');
+const redis = require('../config/redis');
+
+/**
+ * Redis health check controller. Never exposes URL or credentials.
+ * @route GET /api/health/redis
+ */
+const getRedisHealth = async (req, res) => {
+  const health = await redis.checkHealth();
+  if (health.connected) {
+    return res.status(200).json({ success: true, redis: 'connected', latencyMs: health.latencyMs });
+  }
+  return res.status(503).json({
+    success: false,
+    redis: 'disconnected',
+    message: 'Redis cache is unavailable. Cart falls back to PostgreSQL.',
+  });
+};
 
 /**
  * Health check controller.
@@ -91,4 +108,5 @@ module.exports = {
   getHealthStatus,
   getDatabaseHealth,
   getSearchHealth,
+  getRedisHealth,
 };

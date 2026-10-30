@@ -1,7 +1,16 @@
 import { useState } from 'react';
+import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
-export default function ProductDetailModal({ product, isOpen, onClose }) {
+export default function ProductDetailModal({ product, isOpen, onClose, onOpenCart, onOpenAuthModal }) {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  const { addToCart } = useCart();
+  const { user, isAuthenticated } = useAuth();
 
   if (!isOpen || !product) return null;
 
@@ -157,26 +166,100 @@ export default function ProductDetailModal({ product, isOpen, onClose }) {
               )}
             </div>
 
-            {/* Stage 4 Notice & Add to Cart Placeholder */}
+            {/* Cart Actions */}
             <div className="mt-6 pt-4 border-t border-slate-200 space-y-3">
-              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2">
-                <span className="text-base shrink-0">ℹ️</span>
-                <div>
-                  <strong className="font-semibold block">Stage 4 Product Browsing Active</strong>
-                  Cart, universal checkout, and payment processing will be implemented in subsequent project milestones.
+              {errorMsg && (
+                <div className="p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+                  {errorMsg}
                 </div>
-              </div>
+              )}
 
-              <button
-                type="button"
-                disabled
-                className="w-full py-3 px-4 rounded-xl font-semibold text-sm bg-slate-200 text-slate-500 cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-                Add to Cart (Coming in Stage 5)
-              </button>
+              {justAdded ? (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-800">
+                    <span>✓</span>
+                    <span>Added {quantity} to cart!</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        if (onOpenCart) onOpenCart();
+                      }}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-xs transition"
+                    >
+                      View Cart
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  {/* Quantity Stepper */}
+                  {!isOutOfStock && (
+                    <div className="flex items-center border border-slate-300 rounded-xl bg-white shadow-xs">
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        disabled={quantity <= 1 || isAdding}
+                        className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded-l-xl text-sm font-bold disabled:opacity-40"
+                      >
+                        -
+                      </button>
+                      <span className="w-10 text-center text-sm font-bold text-slate-900">
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                        disabled={quantity >= product.stock || isAdding}
+                        className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded-r-xl text-sm font-bold disabled:opacity-40"
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    disabled={isOutOfStock || isAdding}
+                    onClick={async () => {
+                      if (!isAuthenticated) {
+                        onClose();
+                        if (onOpenAuthModal) onOpenAuthModal('login');
+                        return;
+                      }
+                      if (user?.role !== 'customer') {
+                        setErrorMsg('Only customer accounts can add items to cart.');
+                        return;
+                      }
+                      setIsAdding(true);
+                      setErrorMsg(null);
+                      try {
+                        await addToCart(product.id, quantity);
+                        setJustAdded(true);
+                        setTimeout(() => setJustAdded(false), 3000);
+                      } catch (err) {
+                        setErrorMsg(err.message);
+                      } finally {
+                        setIsAdding(false);
+                      }
+                    }}
+                    className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition ${
+                      isOutOfStock
+                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                        : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span>
+                      {isOutOfStock ? 'Out of Stock' : isAdding ? 'Adding to Cart...' : `Add to Cart &bull; $${(product.price * quantity).toFixed(2)}`}
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>

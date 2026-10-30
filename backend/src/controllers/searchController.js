@@ -49,3 +49,4 @@ const searchProducts = async (req, res, next) => {
 module.exports = {
   searchProducts,
 };
+

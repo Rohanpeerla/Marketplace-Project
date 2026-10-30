@@ -2,6 +2,7 @@ const app = require('./app');
 const config = require('./config/env');
 const { testConnection } = require('./config/db');
 const { testEsConnection } = require('./config/elasticsearch');
+const redis = require('./config/redis');
 
 const startServer = async () => {
   try {
@@ -19,6 +20,10 @@ const startServer = async () => {
 
     // Test Elasticsearch connectivity non-blockingly
     await testEsConnection();
+
+    // Connect Redis cache non-blockingly (cart falls back to PostgreSQL if unavailable)
+    const redisOk = await redis.connect();
+    console.log(redisOk ? '[Redis] Connected successfully' : '[Redis] Notice: unavailable, cart uses PostgreSQL only');
 
     // Graceful shutdown handling
     const handleShutdown = (signal) => {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import AuthTestCard from './components/AuthTestCard';
@@ -8,6 +9,7 @@ import ProductSection from './components/ProductSection';
 import ProductDetailModal from './components/ProductDetailModal';
 import VendorDashboardModal from './components/VendorDashboardModal';
 import AdminCategoryModal from './components/AdminCategoryModal';
+import CartModal from './components/CartModal';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 
@@ -20,9 +22,16 @@ export default function App() {
   const [dbLoading, setDbLoading] = useState(true);
   const [dbError, setDbError] = useState(null);
 
+  const [redisStatus, setRedisStatus] = useState(null);
+  const [redisLoading, setRedisLoading] = useState(true);
+  const [redisError, setRedisError] = useState(null);
+
   // Auth Modal State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState('login');
+
+  // Stage 6 Cart Modal State
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Stage 4 Modal States
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -88,6 +97,25 @@ export default function App() {
     } finally {
       setDbLoading(false);
     }
+
+    // Check Redis Health (GET /api/health/redis)
+    setRedisLoading(true);
+    setRedisError(null);
+    try {
+      let resRedis;
+      try {
+        resRedis = await fetch(`${baseUrl}/api/health/redis`);
+      } catch {
+        resRedis = await fetch('http://localhost:5000/api/health/redis');
+      }
+      const dataRedis = await resRedis.json();
+      setRedisStatus(dataRedis);
+    } catch {
+      setRedisError('Redis check could not be completed');
+      setRedisStatus(null);
+    } finally {
+      setRedisLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -96,74 +124,89 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-        {/* Top Navigation */}
-        <Navbar
-          apiStatus={apiStatus}
-          onOpenAuthModal={openAuthModal}
-          onOpenVendorDashboard={() => setIsVendorDashboardOpen(true)}
-          onOpenAdminCategories={() => setIsAdminCategoryOpen(true)}
-        />
-
-        {/* Main Content Area */}
-        <main className="flex-1">
-          {/* Hero Section */}
-          <Hero onOpenAuthModal={openAuthModal} />
-
-          {/* Interactive Stage 3 RBAC Verification Section */}
-          <AuthTestCard onOpenAuthModal={openAuthModal} />
-
-          {/* Live Infrastructure Status Card (API + DB) */}
-          <BackendStatusCard
+      <CartProvider>
+        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+          {/* Top Navigation */}
+          <Navbar
             apiStatus={apiStatus}
-            apiLoading={apiLoading}
-            apiError={apiError}
-            dbStatus={dbStatus}
-            dbLoading={dbLoading}
-            dbError={dbError}
-            onRefresh={fetchHealthChecks}
+            onOpenAuthModal={openAuthModal}
+            onOpenVendorDashboard={() => setIsVendorDashboardOpen(true)}
+            onOpenAdminCategories={() => setIsAdminCategoryOpen(true)}
+            onOpenCart={() => setIsCartOpen(true)}
           />
 
-          {/* Product Marketplace Catalog Section */}
-          <ProductSection
-            key={catalogRefreshKey}
-            onViewProduct={handleViewProduct}
+          {/* Main Content Area */}
+          <main className="flex-1">
+            {/* Hero Section */}
+            <Hero onOpenAuthModal={openAuthModal} />
+
+            {/* Interactive Stage 3 RBAC Verification Section */}
+            <AuthTestCard onOpenAuthModal={openAuthModal} />
+
+            {/* Live Infrastructure Status Card (API + DB + Redis) */}
+            <BackendStatusCard
+              apiStatus={apiStatus}
+              apiLoading={apiLoading}
+              apiError={apiError}
+              dbStatus={dbStatus}
+              dbLoading={dbLoading}
+              dbError={dbError}
+              redisStatus={redisStatus}
+              redisLoading={redisLoading}
+              redisError={redisError}
+              onRefresh={fetchHealthChecks}
+            />
+
+            {/* Product Marketplace Catalog Section */}
+            <ProductSection
+              key={catalogRefreshKey}
+              onViewProduct={handleViewProduct}
+              onOpenAuthModal={openAuthModal}
+            />
+          </main>
+
+          {/* Footer */}
+          <Footer />
+
+          {/* Authentication Modal (Sign In / Sign Up) */}
+          <AuthModal
+            isOpen={isAuthModalOpen}
+            onClose={() => setIsAuthModalOpen(false)}
+            initialTab={authModalTab}
           />
-        </main>
 
-        {/* Footer */}
-        <Footer />
+          {/* Shopping Cart Modal (Customer Stage 6) */}
+          <CartModal
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+          />
 
-        {/* Authentication Modal (Sign In / Sign Up) */}
-        <AuthModal
-          isOpen={isAuthModalOpen}
-          onClose={() => setIsAuthModalOpen(false)}
-          initialTab={authModalTab}
-        />
+          {/* Product Details Modal (Customer Browsing) */}
+          <ProductDetailModal
+            product={selectedProduct}
+            isOpen={isProductDetailOpen}
+            onClose={() => setIsProductDetailOpen(false)}
+            onOpenCart={() => setIsCartOpen(true)}
+            onOpenAuthModal={openAuthModal}
+          />
 
-        {/* Product Details Modal (Customer Browsing) */}
-        <ProductDetailModal
-          product={selectedProduct}
-          isOpen={isProductDetailOpen}
-          onClose={() => setIsProductDetailOpen(false)}
-        />
+          {/* Vendor Dashboard Modal (Vendor Only) */}
+          <VendorDashboardModal
+            isOpen={isVendorDashboardOpen}
+            onClose={() => {
+              setIsVendorDashboardOpen(false);
+              setCatalogRefreshKey((prev) => prev + 1);
+            }}
+          />
 
-        {/* Vendor Dashboard Modal (Vendor Only) */}
-        <VendorDashboardModal
-          isOpen={isVendorDashboardOpen}
-          onClose={() => {
-            setIsVendorDashboardOpen(false);
-            setCatalogRefreshKey((prev) => prev + 1);
-          }}
-        />
-
-        {/* Admin Category Management Modal (Admin Only) */}
-        <AdminCategoryModal
-          isOpen={isAdminCategoryOpen}
-          onClose={() => setIsAdminCategoryOpen(false)}
-          onCategoriesUpdated={handleCategoriesUpdated}
-        />
-      </div>
+          {/* Admin Category Management Modal (Admin Only) */}
+          <AdminCategoryModal
+            isOpen={isAdminCategoryOpen}
+            onClose={() => setIsAdminCategoryOpen(false)}
+            onCategoriesUpdated={handleCategoriesUpdated}
+          />
+        </div>
+      </CartProvider>
     </AuthProvider>
   );
 }
