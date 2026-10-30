@@ -15,6 +15,9 @@ const config = {
   elasticsearchIndex: process.env.ELASTICSEARCH_INDEX || 'products',
   redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
   cartCacheTtlSeconds: parseInt(process.env.CART_CACHE_TTL_SECONDS, 10) || 1800,
+  razorpayKeyId: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder',
+  razorpayKeySecret: process.env.RAZORPAY_KEY_SECRET || 'rzp_test_secret_placeholder',
+  razorpayCurrency: process.env.RAZORPAY_CURRENCY || 'INR',
 };
 
 module.exports = config;

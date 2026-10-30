@@ -152,7 +152,14 @@ MarketHub implements a high-performance **cache-aside shopping cart** backed by 
 - `GET /api/health/search` - Elasticsearch cluster health, version, and latency
 - `GET /api/health/redis` - Redis cache connection health and latency
 
-### 2. Checkout & Order Management (Stage 7)
+### 2. Razorpay Test Mode Payments (Stage 8)
+- `POST /api/payments/create-order` - Create Razorpay payment order for customer order(s) (`{ orderIds: [...] }`)
+- `POST /api/payments/verify` - Cryptographically verify HMAC SHA-256 signature (`{ razorpay_order_id, razorpay_payment_id, razorpay_signature }`)
+- `POST /api/payments/fail` - Record payment dismissal or failure (`{ razorpay_order_id, payment_id }`)
+- `GET /api/payments/order/:orderId` - Retrieve payment record for an order
+- `GET /api/payments/config` - Retrieve public frontend Razorpay configuration (`{ keyId, currency, mode: 'test' }`)
+
+### 3. Checkout & Order Management (Stage 7)
 - `POST /api/orders/checkout` - Atomic multi-vendor checkout (`{ shippingAddress, city, state, postalCode, phone }`)
 - `GET /api/orders` - Customer order history with pagination & status filtering
 - `GET /api/orders/:id` - Customer order detail (verified customer ownership)
@@ -163,23 +170,23 @@ MarketHub implements a high-performance **cache-aside shopping cart** backed by 
 - `GET /api/admin/orders` - Platform-wide order list across all vendors (Admin only)
 - `GET /api/admin/orders/:id` - Platform order detail with full customer & vendor metadata (Admin only)
 
-### 3. Shopping Cart (Stage 6)
+### 4. Shopping Cart (Stage 6)
 - `GET /api/cart` - Retrieve current customer's cart (Redis cache-aside)
 - `POST /api/cart/items` - Add product to cart (`{ productId, quantity }`)
 - `PUT /api/cart/items/:productId` - Update item quantity (`{ quantity }`)
 - `DELETE /api/cart/items/:productId` - Remove single product from cart
 - `DELETE /api/cart` - Clear entire cart
 
-### 4. Search & Catalog (Stage 5)
+### 5. Search & Catalog (Stage 5)
 - `GET /api/search/products` - Search and filter products using Elasticsearch
   - Query params: `q`, `category_id`, `vendor_id`, `min_price`, `max_price`, `sort`, `page`, `limit`
 
-### 5. Authentication & RBAC (Stage 3)
+### 6. Authentication & RBAC (Stage 3)
 - `POST /api/auth/register` - Register customer or vendor account
 - `POST /api/auth/login` - Authenticate user and receive JWT
 - `GET /api/auth/me` - Retrieve current user session and vendor profile
 
-### 6. Vendor & Product Management (Stage 4)
+### 7. Vendor & Product Management (Stage 4)
 - `GET /api/vendors/me` - Authenticated vendor profile
 - `PUT /api/vendors/me` - Update vendor business details
 - `GET /api/vendors` - Public approved vendor list
@@ -199,7 +206,7 @@ MarketHub implements a high-performance **cache-aside shopping cart** backed by 
 
 ## Running Automated Test Suites
 
-Run the complete 5-stage regression test suite (Stage 3 Auth + Stage 4 Products/Vendors + Stage 5 Elasticsearch + Stage 6 Redis/Cart + Stage 7 Checkout/Orders):
+Run the complete 6-stage regression test suite (Stage 3 Auth + Stage 4 Products/Vendors + Stage 5 Elasticsearch + Stage 6 Redis/Cart + Stage 7 Checkout/Orders + Stage 8 Payments):
 ```bash
 npm test
 ```
@@ -211,6 +218,7 @@ npm run test:stage4  # Stage 4 Vendor & Product CRUD (39 tests)
 npm run test:stage5  # Stage 5 Elasticsearch Search & Sync (42 tests)
 npm run test:stage6  # Stage 6 Redis + Shopping Cart (56 tests)
 npm run test:stage7  # Stage 7 Checkout & Order Management (70 tests)
+npm run test:stage8  # Stage 8 Razorpay Test Mode Payments (67 tests)
 ```
 
 ---

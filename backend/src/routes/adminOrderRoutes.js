@@ -25,3 +25,4 @@ router.get('/', getAdminOrders);
 router.get('/:id', getAdminOrderById);
 
 module.exports = router;
+

@@ -5,6 +5,7 @@ const productModel = require('./productModel');
 const productImageModel = require('./productImageModel');
 const cartModel = require('./cartModel');
 const orderModel = require('./orderModel');
+const paymentModel = require('./paymentModel');
 
 module.exports = {
   userModel,
@@ -14,4 +15,5 @@ module.exports = {
   productImageModel,
   cartModel,
   orderModel,
+  paymentModel,
 };

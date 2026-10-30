@@ -410,3 +410,42 @@ export const adminOrderApi = {
     return handleResponse(res);
   },
 };
+
+/**
+ * Razorpay Test Mode Payment API methods (Stage 8)
+ */
+export const paymentApi = {
+  createOrder: async (data) => {
+    const res = await fetchWithAuth('/api/payments/create-order', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  verify: async (data) => {
+    const res = await fetchWithAuth('/api/payments/verify', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  fail: async (data) => {
+    const res = await fetchWithAuth('/api/payments/fail', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  getByOrder: async (orderId) => {
+    const res = await fetchWithAuth(`/api/payments/order/${orderId}`);
+    return handleResponse(res);
+  },
+
+  getConfig: async () => {
+    const res = await fetchWithAuth('/api/payments/config');
+    return handleResponse(res);
+  },
+};

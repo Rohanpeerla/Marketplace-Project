@@ -5,6 +5,7 @@ const productService = require('./productService');
 const searchService = require('./searchService');
 const cartService = require('./cartService');
 const orderService = require('./orderService');
+const paymentService = require('./paymentService');
 
 module.exports = {
   authService,
@@ -14,4 +15,5 @@ module.exports = {
   searchService,
   cartService,
   orderService,
+  paymentService,
 };
