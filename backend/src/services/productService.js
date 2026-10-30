@@ -1,5 +1,6 @@
 const { productModel, productImageModel, vendorModel, categoryModel } = require('../models');
 const { AppError } = require('../utils/appError');
+const searchService = require('./searchService');
 
 /**
  * Helper to assert vendor ownership or admin authority over a product.
@@ -157,7 +158,16 @@ const createProduct = async (user, data) => {
     }
   }
 
-  return productModel.findById(newProduct.id);
+  const created = await productModel.findById(newProduct.id);
+
+  // Sync to Elasticsearch asynchronously without blocking or failing DB operation
+  try {
+    await searchService.indexProduct(created.id);
+  } catch (esErr) {
+    console.warn(`[Elasticsearch Sync] Notice: Could not sync created product ${created.id}:`, esErr.message);
+  }
+
+  return created;
 };
 
 /**
@@ -221,7 +231,16 @@ const updateProduct = async (user, productId, updateData) => {
   };
 
   await productModel.update(productId, sanitizedUpdate);
-  return productModel.findById(productId);
+  const updated = await productModel.findById(productId);
+
+  // Sync to Elasticsearch asynchronously without blocking or failing DB operation
+  try {
+    await searchService.indexProduct(productId);
+  } catch (esErr) {
+    console.warn(`[Elasticsearch Sync] Notice: Could not sync updated product ${productId}:`, esErr.message);
+  }
+
+  return updated;
 };
 
 /**
@@ -233,7 +252,16 @@ const updateProduct = async (user, productId, updateData) => {
  */
 const deleteProduct = async (user, productId) => {
   await assertProductAuthority(user, productId);
-  return productModel.softDelete(productId);
+  const deleted = await productModel.softDelete(productId);
+
+  // Sync soft-deleted state to Elasticsearch
+  try {
+    await searchService.indexProduct(productId);
+  } catch (esErr) {
+    console.warn(`[Elasticsearch Sync] Notice: Could not sync deleted product ${productId}:`, esErr.message);
+  }
+
+  return deleted;
 };
 
 /**
@@ -259,6 +287,13 @@ const addProductImage = async (user, productId, { imageUrl, isPrimary = false })
     isPrimary: Boolean(isPrimary),
   });
 
+  // Sync updated image structure to Elasticsearch
+  try {
+    await searchService.indexProduct(productId);
+  } catch (esErr) {
+    console.warn(`[Elasticsearch Sync] Notice: Could not sync product ${productId} after image add:`, esErr.message);
+  }
+
   return newImage;
 };
 
@@ -278,6 +313,14 @@ const removeProductImage = async (user, productId, imageId) => {
   }
 
   const removed = await productImageModel.remove(imageId);
+
+  // Sync updated image structure to Elasticsearch
+  try {
+    await searchService.indexProduct(productId);
+  } catch (esErr) {
+    console.warn(`[Elasticsearch Sync] Notice: Could not sync product ${productId} after image removal:`, esErr.message);
+  }
+
   return removed;
 };
 

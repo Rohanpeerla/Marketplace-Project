@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { productApi, categoryApi } from '../services/api';
+import { searchApi, productApi, categoryApi } from '../services/api';
 
 export default function ProductSection({ onViewProduct }) {
   const [products, setProducts] = useState([]);
@@ -7,8 +7,12 @@ export default function ProductSection({ onViewProduct }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('all');
+  const [sortOption, setSortOption] = useState('relevance');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, limit: 12, totalPages: 1 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchSource, setSearchSource] = useState('elasticsearch'); // 'elasticsearch' | 'database'
 
   // Load categories
   useEffect(() => {
@@ -25,47 +29,93 @@ export default function ProductSection({ onViewProduct }) {
     loadCategories();
   }, []);
 
-  // Fetch products with active filters
-  const fetchProducts = useCallback(async () => {
+  // Fetch products with active filters and sorting
+  const fetchProducts = useCallback(async (pageToLoad = currentPage) => {
     setLoading(true);
     setError(null);
+
+    const params = {
+      page: pageToLoad,
+      limit: 12,
+      sort: sortOption,
+    };
+
+    if (selectedCategory !== 'all') {
+      params.category_id = selectedCategory;
+    }
+
+    if (searchTerm.trim()) {
+      params.q = searchTerm.trim();
+    }
+
+    if (priceFilter === 'under50') {
+      params.max_price = 50;
+    } else if (priceFilter === '50to100') {
+      params.min_price = 50;
+      params.max_price = 100;
+    } else if (priceFilter === 'over100') {
+      params.min_price = 100;
+    }
+
     try {
-      const params = {
-        limit: 12,
-        status: 'active',
-      };
-
-      if (selectedCategory !== 'all') {
-        params.categoryId = selectedCategory;
-      }
-
-      if (searchTerm.trim()) {
-        params.search = searchTerm.trim();
-      }
-
-      if (priceFilter === 'under50') {
-        params.maxPrice = 50;
-      } else if (priceFilter === '50to100') {
-        params.minPrice = 50;
-        params.maxPrice = 100;
-      } else if (priceFilter === 'over100') {
-        params.minPrice = 100;
-      }
-
-      const res = await productApi.getAll(params);
+      // Primary: query Elasticsearch via search API
+      const res = await searchApi.searchProducts(params);
       if (res.success && Array.isArray(res.products)) {
         setProducts(res.products);
+        if (res.pagination) {
+          setPagination(res.pagination);
+          setCurrentPage(res.pagination.page);
+        }
+        setSearchSource('elasticsearch');
+        return;
       }
-    } catch (err) {
-      setError(err.message || 'Failed to retrieve products from marketplace.');
+      throw new Error(res.message || 'Elasticsearch returned an unexpected response');
+    } catch (searchErr) {
+      console.warn('[Search] Elasticsearch query failed, falling back to PostgreSQL:', searchErr.message);
+      // Fallback: query PostgreSQL directly
+      try {
+        const dbParams = {
+          page: pageToLoad,
+          limit: 12,
+          status: 'active',
+        };
+        if (selectedCategory !== 'all') dbParams.categoryId = selectedCategory;
+        if (searchTerm.trim()) dbParams.search = searchTerm.trim();
+        if (params.min_price) dbParams.minPrice = params.min_price;
+        if (params.max_price) dbParams.maxPrice = params.max_price;
+
+        const dbRes = await productApi.getAll(dbParams);
+        if (dbRes.success && Array.isArray(dbRes.products)) {
+          setProducts(dbRes.products);
+          if (dbRes.pagination) {
+            setPagination(dbRes.pagination);
+            setCurrentPage(dbRes.pagination.page);
+          }
+          setSearchSource('database');
+        } else {
+          setError('Failed to retrieve products from marketplace.');
+        }
+      } catch (dbErr) {
+        setError(dbErr.message || 'Failed to retrieve products from marketplace.');
+      }
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, searchTerm, priceFilter]);
+  }, [currentPage, selectedCategory, searchTerm, priceFilter, sortOption]);
 
+  // When filters or sort change, reset to page 1
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    setCurrentPage(1);
+    fetchProducts(1);
+  }, [selectedCategory, searchTerm, priceFilter, sortOption]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages && newPage !== currentPage) {
+      setCurrentPage(newPage);
+      fetchProducts(newPage);
+      window.scrollTo({ top: document.getElementById('products')?.offsetTop - 80, behavior: 'smooth' });
+    }
+  };
 
   return (
     <section id="products" className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
@@ -77,7 +127,9 @@ export default function ProductSection({ onViewProduct }) {
             <div className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1 flex items-center gap-1.5">
               <span>Marketplace Catalog</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              <span className="text-[10px] text-slate-400 font-mono">Live PostgreSQL 16</span>
+              <span className="text-[10px] text-slate-400 font-mono">
+                {searchSource === 'elasticsearch' ? 'Elasticsearch 7.17 Cluster' : 'PostgreSQL 16 Direct'}
+              </span>
             </div>
             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
               Featured Vendor Products
@@ -87,8 +139,8 @@ export default function ProductSection({ onViewProduct }) {
             </p>
           </div>
 
-          {/* Search & Price Filter Controls */}
-          <div className="mt-6 md:mt-0 flex flex-wrap items-center gap-3">
+          {/* Search, Sort & Price Filter Controls */}
+          <div className="mt-6 md:mt-0 flex flex-wrap items-center gap-2.5">
             {/* Search Input */}
             <div className="relative">
               <input
@@ -96,7 +148,7 @@ export default function ProductSection({ onViewProduct }) {
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 pr-3.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-48 sm:w-56"
+                className="pl-9 pr-3.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-44 sm:w-52"
               />
               <svg className="w-4 h-4 text-slate-400 absolute left-3 top-2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -107,7 +159,7 @@ export default function ProductSection({ onViewProduct }) {
             <select
               value={priceFilter}
               onChange={(e) => setPriceFilter(e.target.value)}
-              className="px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="all">All Prices</option>
               <option value="under50">Under $50</option>
@@ -115,12 +167,25 @@ export default function ProductSection({ onViewProduct }) {
               <option value="over100">Over $100</option>
             </select>
 
+            {/* Sort Options Dropdown */}
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="relevance">Relevance</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="name_asc">Name: A to Z</option>
+              <option value="name_desc">Name: Z to A</option>
+            </select>
+
             {/* Refresh Button */}
             <button
               type="button"
-              onClick={fetchProducts}
+              onClick={() => fetchProducts(currentPage)}
               className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-lg border border-slate-200 transition"
-              title="Refresh products"
+              title="Refresh search"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -186,7 +251,7 @@ export default function ProductSection({ onViewProduct }) {
             <p className="text-sm text-rose-700 font-semibold mb-2">{error}</p>
             <button
               type="button"
-              onClick={fetchProducts}
+              onClick={() => fetchProducts(currentPage)}
               className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg transition"
             >
               Try Again
@@ -208,6 +273,7 @@ export default function ProductSection({ onViewProduct }) {
                 setSelectedCategory('all');
                 setSearchTerm('');
                 setPriceFilter('all');
+                setSortOption('relevance');
               }}
               className="mt-4 px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-xs font-semibold rounded-lg transition"
             >
@@ -309,7 +375,7 @@ export default function ProductSection({ onViewProduct }) {
                         <button
                           type="button"
                           disabled
-                          title="Cart & universal checkout available in Stage 5"
+                          title="Cart & universal checkout available in Stage 6"
                           className="px-3.5 py-2 bg-slate-900/80 text-white text-xs font-semibold rounded-lg opacity-60 cursor-not-allowed flex items-center gap-1"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -324,6 +390,51 @@ export default function ProductSection({ onViewProduct }) {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {!loading && !error && pagination.totalPages > 1 && (
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200 pt-6">
+            <div className="text-xs text-slate-500">
+              Showing page <span className="font-semibold text-slate-800">{pagination.page}</span> of{' '}
+              <span className="font-semibold text-slate-800">{pagination.totalPages}</span> ({pagination.total} total products)
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage <= 1}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+              >
+                Previous
+              </button>
+
+              {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition ${
+                    currentPage === pageNum
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-300'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage >= pagination.totalPages}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
 

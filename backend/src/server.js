@@ -1,6 +1,7 @@
 const app = require('./app');
 const config = require('./config/env');
 const { testConnection } = require('./config/db');
+const { testEsConnection } = require('./config/elasticsearch');
 
 const startServer = async () => {
   try {
@@ -15,6 +16,9 @@ const startServer = async () => {
 
     // Test PostgreSQL database connectivity non-blockingly
     await testConnection();
+
+    // Test Elasticsearch connectivity non-blockingly
+    await testEsConnection();
 
     // Graceful shutdown handling
     const handleShutdown = (signal) => {

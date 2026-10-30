@@ -1,4 +1,5 @@
 const { checkHealth } = require('../config/db');
+const { checkEsHealth } = require('../config/elasticsearch');
 
 /**
  * Health check controller.
@@ -50,7 +51,44 @@ const getDatabaseHealth = async (req, res, next) => {
   }
 };
 
+/**
+ * Elasticsearch search health check controller.
+ * Validates Elasticsearch connection status.
+ * @route GET /api/health/search
+ */
+const getSearchHealth = async (req, res, next) => {
+  try {
+    const health = await checkEsHealth();
+
+    if (health.status === 'connected') {
+      return res.status(200).json({
+        success: true,
+        search: 'connected',
+        cluster_name: health.cluster_name,
+        cluster_status: health.cluster_status,
+        version: health.version,
+        latency_ms: health.latency_ms,
+      });
+    }
+
+    return res.status(503).json({
+      success: false,
+      search: 'disconnected',
+      message: 'Elasticsearch connection check failed.',
+      error: health.error,
+    });
+  } catch (error) {
+    return res.status(503).json({
+      success: false,
+      search: 'disconnected',
+      message: 'Search service health check failed.',
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getHealthStatus,
   getDatabaseHealth,
+  getSearchHealth,
 };

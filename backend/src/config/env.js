@@ -11,6 +11,8 @@ const config = {
   jwtSecret: process.env.JWT_SECRET || 'dev_secret_key_change_in_production',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  elasticsearchUrl: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
+  elasticsearchIndex: process.env.ELASTICSEARCH_INDEX || 'products',
 };
 
 module.exports = config;

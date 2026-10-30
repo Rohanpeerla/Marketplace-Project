@@ -254,3 +254,30 @@ export const vendorApi = {
     return handleResponse(res);
   },
 };
+
+/**
+ * Search API methods (Elasticsearch product search, filter, sort, paginate)
+ */
+export const searchApi = {
+  searchProducts: async (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.q) query.set('q', params.q);
+    if (params.category_id) query.set('category_id', params.category_id);
+    if (params.vendor_id) query.set('vendor_id', params.vendor_id);
+    if (params.min_price !== undefined && params.min_price !== '') query.set('min_price', params.min_price);
+    if (params.max_price !== undefined && params.max_price !== '') query.set('max_price', params.max_price);
+    if (params.sort) query.set('sort', params.sort);
+    if (params.page) query.set('page', params.page);
+    if (params.limit) query.set('limit', params.limit);
+
+    const queryString = query.toString();
+    const endpoint = queryString ? `/api/search/products?${queryString}` : '/api/search/products';
+    const res = await fetchWithAuth(endpoint);
+    return handleResponse(res);
+  },
+
+  getHealth: async () => {
+    const res = await fetchWithAuth('/api/health/search');
+    return handleResponse(res);
+  },
+};

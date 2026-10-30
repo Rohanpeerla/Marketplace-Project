@@ -1,5 +1,9 @@
 const express = require('express');
-const { getHealthStatus, getDatabaseHealth } = require('../controllers/healthController');
+const {
+  getHealthStatus,
+  getDatabaseHealth,
+  getSearchHealth,
+} = require('../controllers/healthController');
 
 const router = express.Router();
 
@@ -16,5 +20,12 @@ router.get('/', getHealthStatus);
  * @access  Public
  */
 router.get('/db', getDatabaseHealth);
+
+/**
+ * @route   GET /api/health/search
+ * @desc    Get Elasticsearch connection health status
+ * @access  Public
+ */
+router.get('/search', getSearchHealth);
 
 module.exports = router;

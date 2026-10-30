@@ -937,3 +937,4 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
     </div>
   );
 }
+

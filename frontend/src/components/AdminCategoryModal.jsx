@@ -343,3 +343,4 @@ export default function AdminCategoryModal({ isOpen, onClose, onCategoriesUpdate
     </div>
   );
 }
+

@@ -8,9 +8,11 @@
     "dev": "nodemon src/server.js",
     "db:init": "node database/initDb.js",
     "db:seed": "node database/seedDb.js",
-    "test": "node scripts/verifyAuth.js && node scripts/verifyStage4.js",
+    "search:reindex": "node scripts/reindexProducts.js",
+    "test": "node scripts/verifyAuth.js && node scripts/verifyStage4.js && node scripts/verifyStage5.js",
     "test:auth": "node scripts/verifyAuth.js",
-    "test:stage4": "node scripts/verifyStage4.js"
+    "test:stage4": "node scripts/verifyStage4.js",
+    "test:stage5": "node scripts/verifyStage5.js"
   },
   "keywords": [
     "express",
@@ -21,6 +23,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@elastic/elasticsearch": "^9.5.1",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
