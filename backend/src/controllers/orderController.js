@@ -1,4 +1,5 @@
 const orderService = require('../services/orderService');
+const invoiceService = require('../services/invoiceService');
 
 /**
  * Customer Checkout Controller.
@@ -67,10 +68,30 @@ const cancelOrder = async (req, res, next) => {
   }
 };
 
+/**
+ * Download Invoice PDF
+ * GET /api/orders/:id/invoice
+ * Access: Authenticated Customer (order owner) or Admin
+ */
+const downloadInvoice = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { doc, filename } = await invoiceService.generateInvoicePdf(id, req.user);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    doc.pipe(res);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   checkout,
   getOrders,
   getOrderById,
   cancelOrder,
+  downloadInvoice,
 };
 

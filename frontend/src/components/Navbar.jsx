@@ -8,6 +8,7 @@ export default function Navbar({
   onOpenVendorDashboard,
   onOpenAdminCategories,
   onOpenAdminOrders,
+  onOpenAdminAnalytics,
   onOpenCart,
   onOpenOrders,
 }) {
@@ -120,6 +121,15 @@ export default function Navbar({
                 {/* Admin Role Actions: Categories & Platform Orders */}
                 {user.role === 'admin' && (
                   <>
+                    <button
+                      type="button"
+                      id="nav-admin-analytics-btn"
+                      onClick={onOpenAdminAnalytics}
+                      className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-indigo-200 transition flex items-center gap-1.5"
+                    >
+                      <span>📈 Analytics</span>
+                    </button>
+
                     <button
                       type="button"
                       id="nav-admin-orders-btn"
@@ -258,6 +268,17 @@ export default function Navbar({
 
               {user.role === 'admin' && (
                 <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (onOpenAdminAnalytics) onOpenAdminAnalytics();
+                    }}
+                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs"
+                  >
+                    📈 Analytics Dashboard
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => {

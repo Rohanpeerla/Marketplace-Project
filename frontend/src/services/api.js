@@ -7,7 +7,7 @@ const TOKEN_KEY = 'markethub_auth_token';
 
 // Resolve base API URL (supports Vite env or falls back to port 5000)
 export const getApiBaseUrl = () => {
-  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  return import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 };
 
 /**
@@ -446,6 +446,150 @@ export const paymentApi = {
 
   getConfig: async () => {
     const res = await fetchWithAuth('/api/payments/config');
+    return handleResponse(res);
+  },
+};
+
+/**
+ * Product Reviews API methods (Stage 9)
+ */
+export const reviewApi = {
+  getProductReviews: async (productId, params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const endpoint = `/api/products/${productId}/reviews${qs ? `?${qs}` : ''}`;
+    const res = await fetchWithAuth(endpoint);
+    return handleResponse(res);
+  },
+
+  createReview: async ({ productId, rating, comment }) => {
+    const res = await fetchWithAuth('/api/reviews', {
+      method: 'POST',
+      body: JSON.stringify({ productId, rating, comment }),
+    });
+    return handleResponse(res);
+  },
+
+  updateReview: async (id, { rating, comment }) => {
+    const res = await fetchWithAuth(`/api/reviews/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ rating, comment }),
+    });
+    return handleResponse(res);
+  },
+
+  deleteReview: async (id) => {
+    const res = await fetchWithAuth(`/api/reviews/${id}`, {
+      method: 'DELETE',
+    });
+    return handleResponse(res);
+  },
+};
+
+/**
+ * Coupons API methods (Stage 9)
+ */
+export const couponApi = {
+  validate: async (code, orderAmount) => {
+    const res = await fetchWithAuth('/api/coupons/validate', {
+      method: 'POST',
+      body: JSON.stringify({ code, orderAmount }),
+    });
+    return handleResponse(res);
+  },
+
+  getCoupons: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchWithAuth(`/api/coupons${qs ? `?${qs}` : ''}`);
+    return handleResponse(res);
+  },
+
+  createCoupon: async (couponData) => {
+    const res = await fetchWithAuth('/api/coupons', {
+      method: 'POST',
+      body: JSON.stringify(couponData),
+    });
+    return handleResponse(res);
+  },
+
+  updateCoupon: async (id, couponData) => {
+    const res = await fetchWithAuth(`/api/coupons/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(couponData),
+    });
+    return handleResponse(res);
+  },
+
+  deleteCoupon: async (id) => {
+    const res = await fetchWithAuth(`/api/coupons/${id}`, {
+      method: 'DELETE',
+    });
+    return handleResponse(res);
+  },
+};
+
+/**
+ * PDF Invoice API methods (Stage 9)
+ */
+export const invoiceApi = {
+  downloadInvoice: async (orderId, invoiceNumber = null) => {
+    const baseUrl = getApiBaseUrl();
+    const token = getStoredToken();
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${baseUrl}/api/orders/${orderId}/invoice`, {
+      method: 'GET',
+      headers,
+    });
+
+    if (!res.ok) {
+      let errMsg = 'Failed to download invoice';
+      try {
+        const errJson = await res.json();
+        errMsg = errJson.message || errMsg;
+      } catch {}
+      throw new Error(errMsg);
+    }
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = invoiceNumber ? `invoice-${invoiceNumber}.pdf` : `invoice-${orderId}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    return true;
+  },
+};
+
+/**
+ * Admin Analytics API methods (Stage 9)
+ */
+export const analyticsApi = {
+  getOverview: async () => {
+    const res = await fetchWithAuth('/api/admin/analytics/overview');
+    return handleResponse(res);
+  },
+
+  getRevenue: async () => {
+    const res = await fetchWithAuth('/api/admin/analytics/revenue');
+    return handleResponse(res);
+  },
+
+  getOrders: async () => {
+    const res = await fetchWithAuth('/api/admin/analytics/orders');
+    return handleResponse(res);
+  },
+
+  getProducts: async () => {
+    const res = await fetchWithAuth('/api/admin/analytics/products');
+    return handleResponse(res);
+  },
+
+  getVendors: async () => {
+    const res = await fetchWithAuth('/api/admin/analytics/vendors');
     return handleResponse(res);
   },
 };

@@ -10,6 +10,9 @@ const orderRoutes = require('./orderRoutes');
 const vendorOrderRoutes = require('./vendorOrderRoutes');
 const adminOrderRoutes = require('./adminOrderRoutes');
 const paymentRoutes = require('./paymentRoutes');
+const reviewRoutes = require('./reviewRoutes');
+const couponRoutes = require('./couponRoutes');
+const adminAnalyticsRoutes = require('./adminAnalyticsRoutes');
 
 const router = express.Router();
 
@@ -25,5 +28,8 @@ router.use('/orders', orderRoutes);
 router.use('/vendor/orders', vendorOrderRoutes);
 router.use('/admin/orders', adminOrderRoutes);
 router.use('/payments', paymentRoutes);
+router.use('/reviews', reviewRoutes);
+router.use('/coupons', couponRoutes);
+router.use('/admin/analytics', adminAnalyticsRoutes);
 
 module.exports = router;

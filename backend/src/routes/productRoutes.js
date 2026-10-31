@@ -8,6 +8,7 @@ const {
   addImage,
   removeImage,
 } = require('../controllers/productController');
+const reviewController = require('../controllers/reviewController');
 const { authenticateToken, requireRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -25,6 +26,13 @@ router.get('/', getAll);
  * @access  Public
  */
 router.get('/:id', getById);
+
+/**
+ * @route   GET /api/products/:productId/reviews
+ * @desc    Get product reviews & ratings breakdown
+ * @access  Public
+ */
+router.get('/:productId/reviews', reviewController.getProductReviews);
 
 /**
  * @route   POST /api/products

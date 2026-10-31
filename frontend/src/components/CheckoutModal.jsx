@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { orderApi, paymentApi } from '../services/api';
+import { orderApi, paymentApi, couponApi, invoiceApi } from '../services/api';
 
 /**
  * Loads Razorpay Standard Checkout SDK script asynchronously if not already loaded.
@@ -31,6 +31,12 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState('');
   
+  // Coupon State
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
   // Placed Orders & Payment State
   const [placedOrders, setPlacedOrders] = useState(null);
   const [paymentSession, setPaymentSession] = useState(null);
@@ -169,6 +175,27 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
     }
   };
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    try {
+      setIsValidatingCoupon(true);
+      setCouponError('');
+      const res = await couponApi.validate(couponCode.trim(), subtotal);
+      setAppliedCoupon(res.data);
+    } catch (err) {
+      setCouponError(err.message || 'Invalid coupon code');
+      setAppliedCoupon(null);
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    setCouponError('');
+  };
+
   const handleCheckout = async (e) => {
     e.preventDefault();
     if (!formData.shippingAddress.trim()) {
@@ -179,7 +206,11 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
     try {
       setLoading(true);
       setError('');
-      const response = await orderApi.checkout(formData);
+      const checkoutPayload = {
+        ...formData,
+        couponCode: appliedCoupon ? appliedCoupon.code : undefined,
+      };
+      const response = await orderApi.checkout(checkoutPayload);
       
       // Invalidate frontend cart state
       await refreshCart();
@@ -286,6 +317,18 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                       <div>Merchant: <strong className="text-slate-800">{ord.vendorName || 'Independent Vendor'}</strong></div>
                       <div className="font-bold text-slate-900">${Number(ord.total).toFixed(2)}</div>
                     </div>
+                    {ord.invoiceNumber && (
+                      <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px]">
+                        <span className="text-slate-500">Invoice: <strong className="text-slate-700 font-mono">{ord.invoiceNumber}</strong></span>
+                        <button
+                          type="button"
+                          onClick={() => invoiceApi.downloadInvoice(ord.id, ord.invoiceNumber)}
+                          className="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                        >
+                          📄 Download PDF
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -373,9 +416,64 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                     </div>
                   ))}
                 </div>
+
+                {/* Coupon Code Section */}
+                <div className="pt-2 border-t border-slate-200">
+                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Have a Coupon / Promo Code?
+                  </label>
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-800">
+                      <div className="flex items-center gap-1.5 font-semibold">
+                        <span>🏷️</span>
+                        <span>{appliedCoupon.code} applied: -${appliedCoupon.discountAmount.toFixed(2)} savings</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveCoupon}
+                        className="text-xs text-rose-600 hover:text-rose-800 font-bold underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          placeholder="e.g. WELCOME10 or FLAT50"
+                          className="flex-1 px-3 py-1.5 border border-slate-300 rounded-lg text-xs uppercase font-medium focus:ring-2 focus:ring-indigo-500 outline-hidden"
+                        />
+                        <button
+                          type="button"
+                          disabled={isValidatingCoupon || !couponCode.trim()}
+                          onClick={handleApplyCoupon}
+                          className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white text-xs font-semibold rounded-lg transition"
+                        >
+                          {isValidatingCoupon ? 'Checking...' : 'Apply'}
+                        </button>
+                      </div>
+                      {couponError && (
+                        <p className="text-[11px] text-rose-600 font-medium">⚠️ {couponError}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {appliedCoupon && (
+                  <div className="flex justify-between items-center text-xs text-emerald-600 font-semibold pt-1">
+                    <span>Discount:</span>
+                    <span>-${appliedCoupon.discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+
                 <div className="border-t border-slate-200 pt-2 flex justify-between items-center text-sm font-bold text-slate-900">
                   <span>Total Due:</span>
-                  <span className="text-indigo-600 text-base">${subtotal.toFixed(2)}</span>
+                  <span className="text-indigo-600 text-base">
+                    ${(appliedCoupon ? appliedCoupon.finalAmount : subtotal).toFixed(2)}
+                  </span>
                 </div>
               </div>
 

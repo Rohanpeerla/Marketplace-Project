@@ -1,4 +1,7 @@
+const crypto = require('crypto');
 const orderModel = require('../models/orderModel');
+const couponModel = require('../models/couponModel');
+const couponService = require('./couponService');
 const { vendorModel } = require('../models');
 const redis = require('../config/redis');
 const searchService = require('./searchService');
@@ -45,6 +48,7 @@ const checkout = async (userId, shippingData = {}) => {
     state,
     postalCode,
     phone,
+    couponCode,
   } = shippingData;
 
   // Format shipping address string
@@ -130,19 +134,64 @@ const checkout = async (userId, shippingData = {}) => {
       group.totalAmount = round2(group.totalAmount + item.subtotal);
     }
 
-    // 5. Create one order per vendor and deduct stock
+    // 4b. Validate Coupon if supplied
+    const totalSubtotal = round2(
+      Array.from(vendorGroups.values()).reduce((sum, g) => sum + g.totalAmount, 0)
+    );
+
+    let appliedCoupon = null;
+    let totalDiscount = 0;
+
+    if (couponCode && typeof couponCode === 'string' && couponCode.trim()) {
+      const couponRes = await couponService.validateCoupon(couponCode.trim(), totalSubtotal, client);
+      appliedCoupon = couponRes.coupon;
+      totalDiscount = couponRes.discountAmount;
+      await couponModel.incrementUsage(appliedCoupon.id, client);
+    }
+
+    // 5. Create one order per vendor with distributed coupon discount and deduct stock
     const createdOrders = [];
-    for (const group of vendorGroups.values()) {
+    const groupsArray = Array.from(vendorGroups.values());
+    let remainingDiscount = totalDiscount;
+
+    for (let idx = 0; idx < groupsArray.length; idx++) {
+      const group = groupsArray[idx];
+      let groupDiscount = 0;
+      if (totalDiscount > 0) {
+        if (idx === groupsArray.length - 1) {
+          groupDiscount = round2(remainingDiscount);
+        } else {
+          groupDiscount = round2((group.totalAmount / totalSubtotal) * totalDiscount);
+          groupDiscount = Math.min(groupDiscount, remainingDiscount);
+          remainingDiscount = round2(remainingDiscount - groupDiscount);
+        }
+      }
+
+      const finalOrderAmount = round2(Math.max(0, group.totalAmount - groupDiscount));
+      const year = new Date().getFullYear();
+      const invHex = crypto.randomBytes(4).toString('hex').toUpperCase();
+      const invoiceNumber = `INV-${year}-${invHex}`;
+
       const orderInsertSql = `
-        INSERT INTO orders (user_id, vendor_id, total_amount, shipping_address, order_status, payment_status)
-        VALUES ($1, $2, $3, $4, 'pending', 'pending')
-        RETURNING id, user_id, vendor_id, total_amount::FLOAT AS total_amount, order_status, payment_status, created_at;
+        INSERT INTO orders (
+          user_id, vendor_id, total_amount, discount_amount,
+          shipping_address, order_status, payment_status,
+          invoice_number, coupon_id, coupon_code
+        )
+        VALUES ($1, $2, $3, $4, $5, 'pending', 'pending', $6, $7, $8)
+        RETURNING id, user_id, vendor_id, total_amount::FLOAT AS total_amount,
+                  discount_amount::FLOAT AS discount_amount,
+                  invoice_number, coupon_code, order_status, payment_status, created_at;
       `;
       const { rows: orderRows } = await client.query(orderInsertSql, [
         userId,
         group.vendorId,
-        group.totalAmount,
+        finalOrderAmount,
+        groupDiscount,
         fullShippingAddress,
+        invoiceNumber,
+        appliedCoupon ? appliedCoupon.id : null,
+        appliedCoupon ? appliedCoupon.code : null,
       ]);
       const newOrder = orderRows[0];
 
@@ -173,9 +222,13 @@ const checkout = async (userId, shippingData = {}) => {
 
       createdOrders.push({
         id: newOrder.id,
+        invoiceNumber: newOrder.invoice_number,
         vendorId: newOrder.vendor_id,
         vendorName: group.vendorName,
+        subtotal: group.totalAmount,
+        discountAmount: groupDiscount,
         total: newOrder.total_amount,
+        couponCode: newOrder.coupon_code,
         status: newOrder.order_status,
         createdAt: newOrder.created_at,
         itemCount: createdItems.reduce((acc, i) => acc + i.quantity, 0),

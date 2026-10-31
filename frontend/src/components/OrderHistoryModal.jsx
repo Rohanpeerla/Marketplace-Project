@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { orderApi, paymentApi } from '../services/api';
+import { orderApi, paymentApi, invoiceApi } from '../services/api';
 
 const STATUS_COLORS = {
   pending: 'bg-amber-100 text-amber-800 border-amber-200',
@@ -270,6 +270,14 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => invoiceApi.downloadInvoice(selectedOrder.id, selectedOrder.invoice_number)}
+                    className="px-3.5 py-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg shadow-2xs transition flex items-center gap-1.5"
+                  >
+                    <span>📄</span>
+                    <span>Download PDF Invoice</span>
+                  </button>
                   {selectedOrder.payment_status !== 'paid' && selectedOrder.order_status !== 'cancelled' && (
                     <button
                       type="button"
@@ -338,11 +346,24 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200">
-                    <div className="text-right">
+                  <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200">
+                    <div className="text-right mr-1">
                       <div className="text-[10px] text-slate-500 uppercase">Total</div>
                       <div className="text-sm font-extrabold text-slate-900">${Number(ord.total_amount).toFixed(2)}</div>
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        invoiceApi.downloadInvoice(ord.id, ord.invoice_number);
+                      }}
+                      title="Download PDF Invoice"
+                      className="px-2.5 py-1.5 bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-600 text-xs font-semibold rounded-lg transition flex items-center gap-1"
+                    >
+                      <span>📄</span>
+                      <span className="hidden sm:inline">PDF</span>
+                    </button>
 
                     <button
                       type="button"
@@ -352,7 +373,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
                       }}
                       className="px-3 py-1.5 bg-white border border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-xs font-semibold rounded-lg transition"
                     >
-                      View Details →
+                      Details →
                     </button>
                   </div>
                 </div>

@@ -3,9 +3,9 @@
 An enterprise-grade full-stack multi-vendor marketplace platform built for high reliability, modular scalability, and modern developer experience.
 
 MarketHub supports three core user roles:
-- **Customer**: Browse products, search and filter via Elasticsearch, view vendor storefronts, add items from multiple vendors to a Redis-cached shopping cart, and manage cart quantities.
-- **Vendor**: Manage vendor profile, product catalog, inventory, product images, order fulfillment, and analytics.
-- **Admin**: Review vendor onboarding applications, mediate disputes, manage product categories, and oversee system health.
+- **Customer**: Browse products, search and filter via Elasticsearch, view vendor storefronts, add items from multiple vendors to a Redis-cached shopping cart, manage cart quantities, apply discount coupons, complete Razorpay test payments, download PDF invoices, and write purchase-verified product reviews.
+- **Vendor**: Manage vendor profile, product catalog, inventory, product images, track order fulfillment, update order statuses, and view merchant performance metrics.
+- **Admin**: Review vendor applications, manage categories, oversee platform orders, moderate product reviews, manage coupon campaigns, and monitor business analytics via the Admin Analytics Dashboard.
 
 ---
 
@@ -20,7 +20,11 @@ MarketHub supports three core user roles:
 | **Connection** | `pg` (node-postgres) | Connection pooling with graceful startup checks |
 | **Search Engine** | Elasticsearch 7.17 | High-performance full-text search, filtering, and sorting |
 | **Cache Layer** | Redis 5.0+ | Sub-millisecond shopping cart cache (`cart:{userId}`) |
+| **Invoicing** | PDFKit | High-fidelity server-side PDF invoice generation |
+| **Payments** | Razorpay SDK (Test Mode) | Secure test mode payment order creation & cryptographic signature verification |
 | **Authentication** | JWT + bcryptjs | Secure password hashing & role-based access control (RBAC) |
+
+> **Note on AWS S3**: Real AWS S3 storage integration is pending from earlier Step 3 requirements and will be configured when an AWS account is provisioned. Currently, product images operate cleanly with resilient URI strings.
 
 ---
 
@@ -33,89 +37,119 @@ MultiVendorMarketplace/
 │   │   └── logo.svg                 # MarketHub brand icon
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Navbar.jsx           # Top navigation with live API health indicator, role badges & Cart (X) count
+│   │   │   ├── Navbar.jsx           # Top navigation with live API health, role badges & cart/analytics links
 │   │   │   ├── Hero.jsx             # Hero section with role highlights & CTAs
-│   │   │   ├── ProductSection.jsx   # Elasticsearch product catalog with search, filters, sort, pagination & Add to Cart
+│   │   │   ├── ProductSection.jsx   # Elasticsearch product catalog with search, filters, sort & ratings
 │   │   │   ├── BackendStatusCard.jsx# Interactive CORS, DB & Redis health verification
 │   │   │   ├── AuthModal.jsx        # Login & registration modal with role switching
-│   │   │   ├── CartModal.jsx        # Shopping cart modal with item controls, vendor tags, and subtotals
-│   │   │   ├── ProductDetailModal.jsx # Product detail modal with quantity selector & Add to Cart
-│   │   │   ├── VendorDashboardModal.jsx # Vendor product & profile management modal
+│   │   │   ├── CartModal.jsx        # Shopping cart modal with item controls, vendor tags & subtotals
+│   │   │   ├── CheckoutModal.jsx    # Checkout with coupon validation & Razorpay test mode payment
+│   │   │   ├── OrderHistoryModal.jsx# Customer order tracking, cancellation & PDF invoice download
+│   │   │   ├── ProductDetailModal.jsx # Detail modal with stock badges & purchase-verified review system
+│   │   │   ├── AdminAnalyticsModal.jsx # Admin dashboard with KPIs, revenue history & vendor leaderboards
+│   │   │   ├── VendorDashboardModal.jsx # Vendor product & order management modal
 │   │   │   ├── AdminCategoryModal.jsx   # Admin category management modal
+│   │   │   ├── AdminOrdersModal.jsx     # Admin platform order monitor modal
 │   │   │   └── Footer.jsx           # Clean footer & system architecture summary
 │   │   ├── context/
 │   │   │   ├── AuthContext.jsx      # Authentication session & profile context
 │   │   │   └── CartContext.jsx      # Shopping cart state, optimistic updates & live count
 │   │   ├── services/
-│   │   │   └── api.js               # Centralized API service (auth, vendors, categories, products, search, cart)
+│   │   │   └── api.js               # Centralized API service (auth, products, cart, orders, reviews, coupons, analytics, invoices)
 │   │   ├── App.jsx                  # Main application assembly & state management
-│   │   ├── App.css                  # Custom styling overrides
 │   │   ├── index.css                # Tailwind CSS v4 entrypoint
 │   │   └── main.jsx                 # React root mount
-│   ├── .env.example                 # Example client environment variables
-│   ├── .gitignore                   # Frontend ignored files (.env, dist, node_modules)
-│   ├── index.html                   # HTML5 shell with Inter typography & metadata
+│   ├── .env.example                 # Example client environment variables (VITE_API_URL)
 │   ├── package.json                 # Frontend dependencies & scripts
 │   └── vite.config.js               # Vite configuration with Tailwind CSS & proxy
 │
 ├── backend/
 │   ├── database/
 │   │   ├── schema.sql               # PostgreSQL 12-table relational schema & indexes
-│   │   ├── seed.sql                 # Seed accounts, vendors, products, and categories
+│   │   ├── seed.sql                 # Seed accounts, vendors, products, categories, and coupons
 │   │   ├── initDb.js                # Database initialization script (npm run db:init)
 │   │   └── seedDb.js                # Database seeding script (npm run db:seed)
 │   ├── scripts/
+│   │   ├── migrateStage9.js         # Stage 9 database migration (coupons, invoice numbers, reviews)
 │   │   ├── verifyAuth.js            # Stage 3 Auth & RBAC verification test suite
 │   │   ├── verifyStage4.js          # Stage 4 Vendor & Product verification test suite
 │   │   ├── verifyStage5.js          # Stage 5 Elasticsearch Search verification test suite
 │   │   ├── verifyStage6.js          # Stage 6 Redis + Shopping Cart verification test suite
+│   │   ├── verifyStage7.js          # Stage 7 Checkout & Order Management verification test suite
+│   │   ├── verifyStage8.js          # Stage 8 Razorpay Test Mode Payment verification test suite
+│   │   ├── verifyStage9.js          # Stage 9 Reviews, Coupons, Invoices & Analytics verification test suite
 │   │   └── reindexProducts.js       # Bulk Elasticsearch reindexing script (npm run search:reindex)
 │   ├── src/
 │   │   ├── config/
-│   │   │   ├── env.js               # Validated environment variables (port, db, jwt, elasticsearch, redis)
+│   │   │   ├── env.js               # Validated environment variables
 │   │   │   ├── db.js                # PostgreSQL connection pool with health checks
-│   │   │   ├── elasticsearch.js     # Elasticsearch client connection & cluster health checks
-│   │   │   └── redis.js             # Reusable Redis service (cache-aside, soft-failure fallback)
+│   │   │   ├── elasticsearch.js     # Elasticsearch client connection
+│   │   │   ├── redis.js             # Reusable Redis service with soft-failure fallback
+│   │   │   └── razorpay.js          # Razorpay Test Mode SDK client & HMAC verifier
 │   │   ├── controllers/
-│   │   ├── cartController.js        # Cart endpoints (/api/cart)
 │   │   │   ├── authController.js    # Register, login, profile (/api/auth)
-│   │   │   ├── vendorController.js  # Vendor profile & vendor directory (/api/vendors)
-│   │   │   ├── categoryController.js# Category management (/api/categories)
-│   │   │   ├── productController.js # Product CRUD & image management (/api/products)
-│   │   │   ├── searchController.js  # Elasticsearch product search & filter (/api/search/products)
-│   │   │   └── healthController.js  # GET /api/health, /api/health/db, /api/health/search, /api/health/redis
+│   │   │   ├── cartController.js    # Cart operations (/api/cart)
+│   │   │   ├── orderController.js   # Customer checkout, cancellation & invoice download (/api/orders)
+│   │   │   ├── paymentController.js # Razorpay test mode payment creation & signature verification (/api/payments)
+│   │   │   ├── reviewController.js  # Product reviews & rating aggregates (/api/reviews)
+│   │   │   ├── couponController.js  # Coupon validation & admin management (/api/coupons)
+│   │   │   ├── adminAnalyticsController.js # Admin analytics KPIs & trends (/api/admin/analytics)
+│   │   │   ├── vendorOrderController.js # Vendor order management (/api/vendor/orders)
+│   │   │   ├── adminOrderController.js  # Admin order overview (/api/admin/orders)
+│   │   │   ├── vendorController.js  # Vendor profile & directory (/api/vendors)
+│   │   │   ├── categoryController.js# Category taxonomy (/api/categories)
+│   │   │   ├── productController.js # Product CRUD (/api/products)
+│   │   │   ├── searchController.js  # Elasticsearch product search (/api/search/products)
+│   │   │   └── healthController.js  # System health endpoints (/api/health/*)
 │   │   ├── middleware/
 │   │   │   ├── authMiddleware.js    # JWT verification & RBAC role guards (requireRole)
 │   │   │   └── errorHandler.js      # Centralized error handler and 404 router
 │   │   ├── models/
-│   │   │   ├── cartModel.js         # PostgreSQL transactional Cart persistence
 │   │   │   ├── userModel.js         # User PostgreSQL model
 │   │   │   ├── vendorModel.js       # Vendor PostgreSQL model
 │   │   │   ├── categoryModel.js     # Category PostgreSQL model
 │   │   │   ├── productModel.js      # Product PostgreSQL model
 │   │   │   ├── productImageModel.js # Product Image PostgreSQL model
+│   │   │   ├── cartModel.js         # Cart persistence PostgreSQL model
+│   │   │   ├── orderModel.js        # Orders & OrderItems transactional PostgreSQL model
+│   │   │   ├── paymentModel.js      # Payment records PostgreSQL model
+│   │   │   ├── reviewModel.js       # Product reviews & rating aggregates model
+│   │   │   ├── couponModel.js       # Coupons model with usage tracking
+│   │   │   ├── analyticsModel.js    # SQL aggregated platform analytics model
 │   │   │   └── index.js             # Models export hub
 │   │   ├── services/
-│   │   │   ├── cartService.js       # Cart business logic, cache-aside, multi-vendor totals, stock checks
-│   │   │   ├── authService.js       # Authentication & JWT issuance logic
-│   │   │   ├── vendorService.js     # Vendor profile business logic
+│   │   │   ├── authService.js       # Authentication & JWT issuance
+│   │   │   ├── cartService.js       # Redis cache-aside cart management
+│   │   │   ├── orderService.js      # Multi-vendor checkout & inventory management
+│   │   │   ├── paymentService.js    # Razorpay test mode order creation & verification
+│   │   │   ├── reviewService.js     # Review authorization & verified purchase enforcement
+│   │   │   ├── couponService.js     # Coupon discount math & validation
+│   │   │   ├── invoiceService.js    # PDFKit PDF tax invoice generator
+│   │   │   ├── analyticsService.js  # Analytics data aggregation
+│   │   │   ├── vendorService.js     # Vendor profile logic
 │   │   │   ├── categoryService.js   # Category management logic
 │   │   │   ├── productService.js    # Product lifecycle & sync orchestration logic
-│   │   │   ├── searchService.js     # Elasticsearch indexing, bulk sync & search engine
+│   │   │   ├── searchService.js     # Elasticsearch search engine
 │   │   │   └── index.js             # Services export hub
 │   │   ├── routes/
-│   │   │   ├── cartRoutes.js        # Protected customer cart routes (/api/cart)
-│   │   │   ├── authRoutes.js        # Auth routes
-│   │   │   ├── vendorRoutes.js      # Vendor profile routes
-│   │   │   ├── categoryRoutes.js    # Category taxonomy routes
-│   │   │   ├── productRoutes.js     # Product catalog routes
-│   │   │   ├── searchRoutes.js      # Search engine routes (/api/search/products)
-│   │   │   ├── healthRoutes.js      # Health endpoints (/health, /health/db, /health/search, /health/redis)
-│   │   │   └── index.js             # Primary API router
+│   │   │   ├── authRoutes.js        # Auth routes (/api/auth)
+│   │   │   ├── cartRoutes.js        # Cart routes (/api/cart)
+│   │   │   ├── orderRoutes.js       # Customer orders & invoices (/api/orders)
+│   │   │   ├── paymentRoutes.js     # Razorpay payments (/api/payments)
+│   │   │   ├── reviewRoutes.js      # Reviews (/api/reviews)
+│   │   │   ├── couponRoutes.js      # Coupons (/api/coupons)
+│   │   │   ├── adminAnalyticsRoutes.js # Admin analytics (/api/admin/analytics)
+│   │   │   ├── vendorOrderRoutes.js # Vendor orders (/api/vendor/orders)
+│   │   │   ├── adminOrderRoutes.js  # Admin orders (/api/admin/orders)
+│   │   │   ├── vendorRoutes.js      # Vendor directory (/api/vendors)
+│   │   │   ├── categoryRoutes.js    # Category routes (/api/categories)
+│   │   │   ├── productRoutes.js     # Product routes (/api/products)
+│   │   │   ├── searchRoutes.js      # Search routes (/api/search/products)
+│   │   │   ├── healthRoutes.js      # Health endpoints (/api/health)
+│   │   │   └── index.js             # Main router
 │   │   ├── app.js                   # Express application setup
 │   │   └── server.js                # Server entrypoint with DB, ES & Redis checks
 │   ├── .env.example                 # Safe environment template without secrets
-│   ├── .gitignore                   # Backend ignored files (.env, node_modules)
 │   └── package.json                 # Backend dependencies & npm scripts
 │
 ├── .gitignore                       # Root Git ignore rules
@@ -125,42 +159,40 @@ MultiVendorMarketplace/
 
 ---
 
-## Shopping Cart & Redis Cache Architecture (Stage 6)
-
-MarketHub implements a high-performance **cache-aside shopping cart** backed by **PostgreSQL 16** and cached in **Redis 5.0+**:
-
-### Key Architectural Principles
-1. **PostgreSQL is the Source of Truth**: `carts` and `cart_items` tables durably store every cart item inside atomic database transactions (`BEGIN...COMMIT`).
-2. **Redis Cache-Aside**: When a customer retrieves their cart (`GET /api/cart`), the response is served directly from Redis (`cart:{userId}`) with sub-millisecond retrieval latency. On cache miss, the cart is assembled from PostgreSQL, cached in Redis with a 30-minute TTL, and returned.
-3. **Write-Through Invalidation**: Every cart mutation (`POST /api/cart/items`, `PUT /api/cart/items/:id`, `DELETE /api/cart/items/:id`, `DELETE /api/cart`) updates PostgreSQL first and immediately refreshes the Redis cache, eliminating stale data.
-4. **Soft-Failure Resilience**: If Redis is offline or restarted, the cart feature automatically falls back to PostgreSQL. Mutations and reads succeed transparently, and the user's cart is fully preserved.
-5. **Multi-Vendor Cart Support**: A customer can hold products from multiple independent vendors in a single unified cart with separate vendor attribution per item.
-6. **Server-Enforced Stock & Price Security**: Product prices and available inventory are strictly queried from PostgreSQL at transaction time. Client-supplied prices are completely ignored, and requests exceeding current stock are rejected with `409 Conflict`.
-
-### Redis Key Design
-- **Format**: `cart:{userId}` (e.g. `cart:c8f1e944-77bf-4e63-8a32-9cb7e7bbdd8a`)
-- **TTL**: 1800 seconds (30 minutes)
-- **Serialization**: JSON stringified cart payload containing items, vendor information, quantity, stock, and computed subtotals.
-
----
-
 ## API Endpoints
 
-### 1. Health Checks
-- `GET /api/health` - API server status and uptime
-- `GET /api/health/db` - PostgreSQL database connectivity status
-- `GET /api/health/search` - Elasticsearch cluster health, version, and latency
-- `GET /api/health/redis` - Redis cache connection health and latency
+### 1. Product Reviews (Stage 9)
+- `GET /api/products/:productId/reviews` - Public list of product reviews with rating breakdown and average rating
+- `POST /api/reviews` - Submit review (`{ productId, rating, comment }`) — strictly requires verified purchaser
+- `PUT /api/reviews/:id` - Update review rating and comment (Review owner only)
+- `DELETE /api/reviews/:id` - Delete review (Review owner or Admin moderation)
 
-### 2. Razorpay Test Mode Payments (Stage 8)
-- `POST /api/payments/create-order` - Create Razorpay payment order for customer order(s) (`{ orderIds: [...] }`)
-- `POST /api/payments/verify` - Cryptographically verify HMAC SHA-256 signature (`{ razorpay_order_id, razorpay_payment_id, razorpay_signature }`)
-- `POST /api/payments/fail` - Record payment dismissal or failure (`{ razorpay_order_id, payment_id }`)
+### 2. Coupons & Discounts (Stage 9)
+- `POST /api/coupons/validate` - Validate coupon for an order amount (`{ code, orderAmount }`)
+- `GET /api/coupons` - List all coupons (Admin only)
+- `POST /api/coupons` - Create new percentage or fixed coupon (Admin only)
+- `PUT /api/coupons/:id` - Update coupon details (Admin only)
+- `DELETE /api/coupons/:id` - Delete coupon (Admin only)
+
+### 3. PDF Invoices (Stage 9)
+- `GET /api/orders/:id/invoice` - Download formatted PDF invoice (`INV-YYYY-XXXXXX`) for an order (Customer owner or Admin)
+
+### 4. Admin Analytics Dashboard (Stage 9)
+- `GET /api/admin/analytics/overview` - Platform KPIs (Gross Revenue, Total Orders, Active Vendors, Active Products, Avg Order Value)
+- `GET /api/admin/analytics/revenue` - Monthly revenue history & payment method breakdowns
+- `GET /api/admin/analytics/orders` - Order status distribution, fulfillment rate & cancellation rate
+- `GET /api/admin/analytics/products` - Top selling products by units & low stock inventory alerts (stock ≤ 5)
+- `GET /api/admin/analytics/vendors` - Vendor leaderboard by gross GMV and order counts
+
+### 5. Razorpay Test Mode Payments (Stage 8)
+- `POST /api/payments/create-order` - Create Razorpay test payment order (`{ orderIds: [...] }`)
+- `POST /api/payments/verify` - Cryptographically verify HMAC SHA-256 signature
+- `POST /api/payments/fail` - Record payment dismissal or failure
 - `GET /api/payments/order/:orderId` - Retrieve payment record for an order
 - `GET /api/payments/config` - Retrieve public frontend Razorpay configuration (`{ keyId, currency, mode: 'test' }`)
 
-### 3. Checkout & Order Management (Stage 7)
-- `POST /api/orders/checkout` - Atomic multi-vendor checkout (`{ shippingAddress, city, state, postalCode, phone }`)
+### 6. Checkout & Order Management (Stage 7)
+- `POST /api/orders/checkout` - Atomic multi-vendor checkout with coupon support (`{ shippingAddress, city, state, postalCode, phone, couponCode }`)
 - `GET /api/orders` - Customer order history with pagination & status filtering
 - `GET /api/orders/:id` - Customer order detail (verified customer ownership)
 - `PUT /api/orders/:id/cancel` - Cancel order (`pending`, `placed`, `confirmed`), restores stock atomically
@@ -170,23 +202,23 @@ MarketHub implements a high-performance **cache-aside shopping cart** backed by 
 - `GET /api/admin/orders` - Platform-wide order list across all vendors (Admin only)
 - `GET /api/admin/orders/:id` - Platform order detail with full customer & vendor metadata (Admin only)
 
-### 4. Shopping Cart (Stage 6)
+### 7. Shopping Cart (Stage 6)
 - `GET /api/cart` - Retrieve current customer's cart (Redis cache-aside)
 - `POST /api/cart/items` - Add product to cart (`{ productId, quantity }`)
 - `PUT /api/cart/items/:productId` - Update item quantity (`{ quantity }`)
 - `DELETE /api/cart/items/:productId` - Remove single product from cart
 - `DELETE /api/cart` - Clear entire cart
 
-### 5. Search & Catalog (Stage 5)
+### 8. Search & Catalog (Stage 5)
 - `GET /api/search/products` - Search and filter products using Elasticsearch
   - Query params: `q`, `category_id`, `vendor_id`, `min_price`, `max_price`, `sort`, `page`, `limit`
 
-### 6. Authentication & RBAC (Stage 3)
+### 9. Authentication & RBAC (Stage 3)
 - `POST /api/auth/register` - Register customer or vendor account
 - `POST /api/auth/login` - Authenticate user and receive JWT
 - `GET /api/auth/me` - Retrieve current user session and vendor profile
 
-### 7. Vendor & Product Management (Stage 4)
+### 10. Vendor & Product Management (Stage 4)
 - `GET /api/vendors/me` - Authenticated vendor profile
 - `PUT /api/vendors/me` - Update vendor business details
 - `GET /api/vendors` - Public approved vendor list
@@ -206,12 +238,14 @@ MarketHub implements a high-performance **cache-aside shopping cart** backed by 
 
 ## Running Automated Test Suites
 
-Run the complete 6-stage regression test suite (Stage 3 Auth + Stage 4 Products/Vendors + Stage 5 Elasticsearch + Stage 6 Redis/Cart + Stage 7 Checkout/Orders + Stage 8 Payments):
+MarketHub features a 100% automated test suite with **332 tests** passing across all stages:
+
 ```bash
+# Run the complete regression test suite (Stages 3 to 9)
 npm test
 ```
 
-Or run individual suites:
+Or run individual stage suites:
 ```bash
 npm run test:auth    # Stage 3 Auth & RBAC (25 tests)
 npm run test:stage4  # Stage 4 Vendor & Product CRUD (39 tests)
@@ -219,6 +253,7 @@ npm run test:stage5  # Stage 5 Elasticsearch Search & Sync (42 tests)
 npm run test:stage6  # Stage 6 Redis + Shopping Cart (56 tests)
 npm run test:stage7  # Stage 7 Checkout & Order Management (70 tests)
 npm run test:stage8  # Stage 8 Razorpay Test Mode Payments (67 tests)
+npm run test:stage9  # Stage 9 Reviews, Coupons, Invoices & Analytics (33 tests)
 ```
 
 ---
@@ -227,7 +262,7 @@ npm run test:stage8  # Stage 8 Razorpay Test Mode Payments (67 tests)
 
 ### 1. Prerequisites
 - Node.js 18+
-- PostgreSQL 16 listening on `localhost:5432`
+- PostgreSQL 16 listening on `localhost:5432` (`markethub_db`)
 - Elasticsearch 7.17+ listening on `localhost:9200`
 - Redis 5.0+ listening on `localhost:6379`
 
@@ -244,26 +279,34 @@ ELASTICSEARCH_URL=http://localhost:9200
 ELASTICSEARCH_INDEX=products
 REDIS_URL=redis://localhost:6379
 CART_CACHE_TTL_SECONDS=1800
+RAZORPAY_KEY_ID=rzp_test_placeholder
+RAZORPAY_KEY_SECRET=rzp_test_secret_placeholder
+RAZORPAY_CURRENCY=INR
 ```
 
-### 3. Database Initialization & Search Indexing
+Configure `frontend/.env`:
+```env
+VITE_API_URL=http://localhost:5000
+VITE_API_BASE_URL=http://localhost:5000
+```
+
+### 3. Database Initialization, Migration & Search Indexing
 ```bash
 npm run db:init
 npm run db:seed
+node backend/scripts/migrateStage9.js
 npm run search:reindex
 ```
 
 ### 4. Start the Application
 #### Terminal 1: Backend API
 ```bash
-cd backend
-npm run dev
+npm run dev:backend
 ```
 
 #### Terminal 2: Frontend Client
 ```bash
-cd frontend
-npm run dev
+npm run dev:frontend
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.

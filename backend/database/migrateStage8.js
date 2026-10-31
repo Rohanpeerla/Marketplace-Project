@@ -40,3 +40,4 @@ async function migrateStage8() {
 }
 
 migrateStage8().catch(() => process.exit(1));
+

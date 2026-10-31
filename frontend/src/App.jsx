@@ -10,6 +10,7 @@ import ProductDetailModal from './components/ProductDetailModal';
 import VendorDashboardModal from './components/VendorDashboardModal';
 import AdminCategoryModal from './components/AdminCategoryModal';
 import AdminOrdersModal from './components/AdminOrdersModal';
+import AdminAnalyticsModal from './components/AdminAnalyticsModal';
 import CartModal from './components/CartModal';
 import CheckoutModal from './components/CheckoutModal';
 import OrderHistoryModal from './components/OrderHistoryModal';
@@ -40,6 +41,7 @@ export default function App() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isOrdersOpen, setIsOrdersOpen] = useState(false);
   const [isAdminOrdersOpen, setIsAdminOrdersOpen] = useState(false);
+  const [isAdminAnalyticsOpen, setIsAdminAnalyticsOpen] = useState(false);
 
   // Stage 4 Modal States
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -141,6 +143,7 @@ export default function App() {
             onOpenVendorDashboard={() => setIsVendorDashboardOpen(true)}
             onOpenAdminCategories={() => setIsAdminCategoryOpen(true)}
             onOpenAdminOrders={() => setIsAdminOrdersOpen(true)}
+            onOpenAdminAnalytics={() => setIsAdminAnalyticsOpen(true)}
             onOpenCart={() => setIsCartOpen(true)}
             onOpenOrders={() => setIsOrdersOpen(true)}
           />
@@ -234,6 +237,12 @@ export default function App() {
           <AdminOrdersModal
             isOpen={isAdminOrdersOpen}
             onClose={() => setIsAdminOrdersOpen(false)}
+          />
+
+          {/* Admin Analytics Dashboard Modal (Admin Only: KPIs & Trends) */}
+          <AdminAnalyticsModal
+            isOpen={isAdminAnalyticsOpen}
+            onClose={() => setIsAdminAnalyticsOpen(false)}
           />
         </div>
       </CartProvider>

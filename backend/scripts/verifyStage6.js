@@ -327,7 +327,7 @@ async function runStage6Tests() {
   console.log('\n====================================================');
   console.log(`Stage 6 Test Results: Total Passed: ${passed}, Total Failed: ${failed}`);
   console.log('====================================================\n');
-  if (failed > 0) process.exitCode = 1;
+  process.exit(failed > 0 ? 1 : 0);
 }
 
 runStage6Tests();

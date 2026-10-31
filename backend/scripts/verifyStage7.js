@@ -467,7 +467,9 @@ async function runStage7Tests() {
   }
 
   if (failed > 0) {
-    process.exitCode = 1;
+    process.exit(1);
+  } else {
+    process.exit(0);
   }
 }
 

@@ -9,13 +9,14 @@
     "db:init": "node database/initDb.js",
     "db:seed": "node database/seedDb.js",
     "search:reindex": "node scripts/reindexProducts.js",
-    "test": "node scripts/verifyAuth.js && node scripts/verifyStage4.js && node scripts/verifyStage5.js && node scripts/verifyStage6.js && node scripts/verifyStage7.js && node scripts/verifyStage8.js",
+    "test": "node scripts/verifyAuth.js && node scripts/verifyStage4.js && node scripts/verifyStage5.js && node scripts/verifyStage6.js && node scripts/verifyStage7.js && node scripts/verifyStage8.js && node scripts/verifyStage9.js",
     "test:auth": "node scripts/verifyAuth.js",
     "test:stage4": "node scripts/verifyStage4.js",
     "test:stage5": "node scripts/verifyStage5.js",
     "test:stage6": "node scripts/verifyStage6.js",
     "test:stage7": "node scripts/verifyStage7.js",
-    "test:stage8": "node scripts/verifyStage8.js"
+    "test:stage8": "node scripts/verifyStage8.js",
+    "test:stage9": "node scripts/verifyStage9.js"
   },
   "keywords": [
     "express",
@@ -32,6 +33,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.3",
+    "pdfkit": "^0.20.2",
     "pg": "^8.13.1",
     "razorpay": "^2.9.8",
     "redis": "^6.3.1"

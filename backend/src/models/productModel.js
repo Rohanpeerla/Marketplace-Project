@@ -134,6 +134,8 @@ const findById = async (id) => {
            c.name AS category_name, c.description AS category_description,
            v.business_name AS vendor_name, v.business_email AS vendor_email,
            v.phone AS vendor_phone, v.status AS vendor_status,
+           COALESCE(rev.average_rating, 0)::FLOAT AS average_rating,
+           COALESCE(rev.review_count, 0)::INT AS review_count,
            COALESCE(
              json_agg(
                json_build_object(
@@ -149,8 +151,15 @@ const findById = async (id) => {
     LEFT JOIN categories c ON p.category_id = c.id
     LEFT JOIN vendors v ON p.vendor_id = v.id
     LEFT JOIN product_images pi ON pi.product_id = p.id
+    LEFT JOIN (
+      SELECT product_id,
+             COALESCE(ROUND(AVG(rating)::NUMERIC, 1), 0)::FLOAT AS average_rating,
+             COUNT(*)::INT AS review_count
+      FROM reviews
+      GROUP BY product_id
+    ) rev ON rev.product_id = p.id
     WHERE p.id = $1
-    GROUP BY p.id, c.id, v.id;
+    GROUP BY p.id, c.id, v.id, rev.average_rating, rev.review_count;
   `;
   const result = await query(sql, [id]);
   return result.rows[0] || null;

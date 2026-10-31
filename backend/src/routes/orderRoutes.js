@@ -4,12 +4,20 @@ const {
   getOrders,
   getOrderById,
   cancelOrder,
+  downloadInvoice,
 } = require('../controllers/orderController');
 const { authenticateToken, requireRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// Customer only
+/**
+ * @route   GET /api/orders/:id/invoice
+ * @desc    Download PDF invoice for an order
+ * @access  Private (Order Owner Customer or Admin)
+ */
+router.get('/:id/invoice', authenticateToken, downloadInvoice);
+
+// Customer only routes
 router.use(authenticateToken, requireRole('customer'));
 
 /**

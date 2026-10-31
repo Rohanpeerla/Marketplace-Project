@@ -40,6 +40,8 @@ const findOrdersByCustomer = async (userId, { page = 1, limit = 10 } = {}) => {
 
   const sql = `
     SELECT o.id, o.user_id, o.vendor_id, o.total_amount::FLOAT AS total_amount,
+           o.discount_amount::FLOAT AS discount_amount,
+           o.invoice_number, o.coupon_code,
            o.payment_status, o.order_status, o.shipping_address,
            o.created_at, o.updated_at,
            v.business_name AS vendor_name,
@@ -73,6 +75,7 @@ const findOrderById = async (orderId, client = null) => {
            o.discount_amount::FLOAT AS discount_amount,
            o.platform_commission::FLOAT AS platform_commission,
            o.payment_status, o.order_status, o.shipping_address,
+           o.invoice_number, o.coupon_id, o.coupon_code,
            o.created_at, o.updated_at,
            u.name AS customer_name, u.email AS customer_email,
            v.business_name AS vendor_name, v.business_email AS vendor_email,
@@ -131,6 +134,8 @@ const findOrdersByVendor = async (vendorId, { page = 1, limit = 10, status } = {
   const dataParams = [...params, safeLimit, offset];
   const sql = `
     SELECT o.id, o.user_id, o.vendor_id, o.total_amount::FLOAT AS total_amount,
+           o.discount_amount::FLOAT AS discount_amount,
+           o.invoice_number, o.coupon_code,
            o.payment_status, o.order_status, o.shipping_address,
            o.created_at, o.updated_at,
            u.name AS customer_name, u.email AS customer_email,
@@ -188,6 +193,8 @@ const findAllOrdersAdmin = async ({ page = 1, limit = 15, status, vendorId, cust
   const dataParams = [...params, safeLimit, offset];
   const sql = `
     SELECT o.id, o.user_id, o.vendor_id, o.total_amount::FLOAT AS total_amount,
+           o.discount_amount::FLOAT AS discount_amount,
+           o.invoice_number, o.coupon_code,
            o.payment_status, o.order_status, o.shipping_address,
            o.created_at, o.updated_at,
            u.name AS customer_name, u.email AS customer_email,

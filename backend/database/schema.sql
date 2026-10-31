@@ -173,6 +173,9 @@ CREATE TABLE IF NOT EXISTS orders (
     payment_status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed', 'refunded')),
     order_status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (order_status IN ('pending', 'confirmed', 'processing', 'placed', 'packed', 'shipped', 'delivered', 'cancelled')),
     shipping_address TEXT NOT NULL,
+    invoice_number VARCHAR(50) UNIQUE,
+    coupon_id UUID REFERENCES coupons(id) ON DELETE SET NULL,
+    coupon_code VARCHAR(50),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -240,6 +243,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
     rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
     comment TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -266,7 +270,10 @@ CREATE TABLE IF NOT EXISTS coupons (
     discount_value NUMERIC(12,2) NOT NULL CHECK (discount_value > 0),
     minimum_order_amount NUMERIC(12,2) DEFAULT 0.00 CHECK (minimum_order_amount >= 0),
     maximum_discount_amount NUMERIC(12,2) CHECK (maximum_discount_amount >= 0),
+    start_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     expiry_date TIMESTAMPTZ,
+    usage_limit INTEGER DEFAULT NULL,
+    used_count INTEGER NOT NULL DEFAULT 0,
     active BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
