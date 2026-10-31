@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { orderApi, paymentApi, couponApi, invoiceApi } from '../services/api';
 
@@ -42,6 +42,12 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
   const [paymentSession, setPaymentSession] = useState(null);
   const [paymentResult, setPaymentResult] = useState(null);
   const [selectedPayMethod, setSelectedPayMethod] = useState('card');
+
+  useEffect(() => {
+    if (isOpen) {
+      refreshCart();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -208,6 +214,11 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
 
   const handleCheckout = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    if (items.length === 0) {
+      setError('Your cart is empty. Please add items to your cart.');
+      return;
+    }
     if (!formData.shippingAddress.trim()) {
       setError('Street address is required.');
       return;
@@ -222,12 +233,12 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
       };
       const response = await orderApi.checkout(checkoutPayload);
       
-      // Invalidate frontend cart state
-      await refreshCart();
-
       const createdOrders = response.orders || [];
       setPlacedOrders(createdOrders);
       if (onOrderSuccess) onOrderSuccess(createdOrders);
+
+      // Invalidate frontend cart state
+      await refreshCart();
 
       // Immediately initiate Razorpay Test Payment Order
       await initiateRazorpayPayment(createdOrders);
@@ -243,6 +254,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
     setPaymentSession(null);
     setPaymentResult(null);
     setError('');
+    refreshCart();
     onClose();
   };
 
@@ -484,6 +496,38 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                   className="w-full sm:w-auto px-5 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg transition"
                 >
                   Continue Shopping
+                </button>
+              </div>
+            </div>
+          ) : items.length === 0 ? (
+            /* Empty Cart View */
+            <div className="py-12 text-center space-y-4">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-3xl">
+                🛒
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-slate-900">Your cart is empty</h4>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
+                  You do not have any items in your cart to checkout. If you already placed an order, you can view your orders to complete payment anytime.
+                </p>
+              </div>
+              <div className="flex items-center justify-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleClose();
+                    if (onOpenOrders) onOpenOrders();
+                  }}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-xs transition"
+                >
+                  View My Orders & Pay
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg transition"
+                >
+                  Browse Products
                 </button>
               </div>
             </div>
