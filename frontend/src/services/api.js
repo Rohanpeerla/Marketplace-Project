@@ -431,6 +431,14 @@ export const paymentApi = {
     return handleResponse(res);
   },
 
+  simulateSuccess: async (data) => {
+    const res = await fetchWithAuth('/api/payments/simulate-success', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
   fail: async (data) => {
     const res = await fetchWithAuth('/api/payments/fail', {
       method: 'POST',

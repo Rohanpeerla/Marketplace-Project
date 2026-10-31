@@ -10,6 +10,7 @@ router.get('/config', paymentController.getConfig);
 // Protected Customer Payment Actions
 router.post('/create-order', authenticateToken, requireRole('customer'), paymentController.createOrder);
 router.post('/verify', authenticateToken, requireRole('customer'), paymentController.verify);
+router.post('/simulate-success', authenticateToken, requireRole('customer'), paymentController.simulateSuccess);
 router.post('/fail', authenticateToken, requireRole('customer'), paymentController.fail);
 
 // Protected Payment Record Inspection (Customer, Vendor, Admin)

@@ -48,3 +48,4 @@ class AdminAnalyticsController {
 }
 
 module.exports = new AdminAnalyticsController();
+

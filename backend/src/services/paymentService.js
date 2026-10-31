@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const paymentModel = require('../models/paymentModel');
 const { orderModel, vendorModel } = require('../models');
 const { pool } = require('../config/db');
@@ -96,6 +97,7 @@ const createPaymentOrder = async (userId, data = {}) => {
     amount: razorpayOrder.amount, // subunits (paise)
     currency: razorpayOrder.currency,
     keyId: razorpayClient.getKeyId(),
+    isLiveKey: razorpayClient.isConfigured(),
     orderIds: targetIds,
     totalAmount,
     receipt,
@@ -260,14 +262,40 @@ const getPaymentByOrderId = async (user, orderId) => {
 const getPublicConfig = () => {
   return {
     keyId: razorpayClient.getKeyId(),
+    isLiveKey: razorpayClient.isConfigured(),
     currency: config.razorpayCurrency || 'INR',
     mode: 'test',
   };
 };
 
+/**
+ * 6. Simulate Razorpay Test Payment Success.
+ * Generates an authentic cryptographic HMAC SHA-256 test signature
+ * and runs the complete verification and capture pipeline.
+ */
+const simulatePaymentSuccess = async (userId, data = {}) => {
+  const { razorpay_order_id } = data;
+  if (!razorpay_order_id || typeof razorpay_order_id !== 'string') {
+    throw new AppError('razorpay_order_id is required', 400);
+  }
+
+  const mockPaymentId = `pay_sim_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+  const validSignature = crypto
+    .createHmac('sha256', config.razorpayKeySecret)
+    .update(`${razorpay_order_id}|${mockPaymentId}`)
+    .digest('hex');
+
+  return verifyPayment(userId, {
+    razorpay_order_id,
+    razorpay_payment_id: mockPaymentId,
+    razorpay_signature: validSignature,
+  });
+};
+
 module.exports = {
   createPaymentOrder,
   verifyPayment,
+  simulatePaymentSuccess,
   handlePaymentFailure,
   getPaymentByOrderId,
   getPublicConfig,

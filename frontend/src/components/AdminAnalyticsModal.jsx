@@ -360,3 +360,4 @@ export default function AdminAnalyticsModal({ isOpen, onClose }) {
     </div>
   );
 }
+

@@ -13,3 +13,4 @@ router.get('/products', adminAnalyticsController.getProducts);
 router.get('/vendors', adminAnalyticsController.getVendors);
 
 module.exports = router;
+

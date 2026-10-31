@@ -29,6 +29,20 @@ const verify = async (req, res, next) => {
 };
 
 /**
+ * Customer simulates successful Razorpay payment in test mode.
+ * POST /api/payments/simulate-success
+ * Access: Customer only
+ */
+const simulateSuccess = async (req, res, next) => {
+  try {
+    const result = await paymentService.simulatePaymentSuccess(req.user.id, req.body);
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Customer handles payment failure or dismissal.
  * POST /api/payments/fail
  * Access: Customer only
@@ -79,6 +93,7 @@ const getConfig = async (req, res, next) => {
 module.exports = {
   createOrder,
   verify,
+  simulateSuccess,
   fail,
   getPaymentByOrder,
   getConfig,

@@ -162,3 +162,4 @@ const analyticsModel = {
 };
 
 module.exports = analyticsModel;
+

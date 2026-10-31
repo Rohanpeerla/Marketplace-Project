@@ -13,3 +13,4 @@ router.put('/:id', authenticateToken, requireRole('admin'), couponController.upd
 router.delete('/:id', authenticateToken, requireRole('admin'), couponController.deleteCoupon);
 
 module.exports = router;
+
