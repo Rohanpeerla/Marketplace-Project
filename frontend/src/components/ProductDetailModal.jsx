@@ -116,7 +116,7 @@ export default function ProductDetailModal({ product, isOpen, onClose, onOpenCar
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50/70">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
               {product.category_name || 'General Product'}
             </span>
             <span className="text-xs text-slate-400">ID: {product.id.substring(0, 8)}...</span>
@@ -180,7 +180,7 @@ export default function ProductDetailModal({ product, isOpen, onClose, onOpenCar
                       onClick={() => setSelectedImage(img.image_url)}
                       className={`w-16 h-16 rounded-lg border-2 overflow-hidden shrink-0 transition ${
                         activeImageUrl === img.image_url
-                          ? 'border-indigo-600 ring-2 ring-indigo-200'
+                          ? 'border-blue-600 ring-2 ring-blue-200'
                           : 'border-slate-200 hover:border-slate-300 opacity-70 hover:opacity-100'
                       }`}
                     >
@@ -200,7 +200,7 @@ export default function ProductDetailModal({ product, isOpen, onClose, onOpenCar
               <div className="space-y-4">
                 {/* Vendor Attribution */}
                 <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 font-bold flex items-center justify-center shrink-0">
                     🏪
                   </div>
                   <div className="flex-1 truncate">
@@ -331,7 +331,7 @@ export default function ProductDetailModal({ product, isOpen, onClose, onOpenCar
                       className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition ${
                         isOutOfStock
                           ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                          : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200'
                       }`}
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -436,7 +436,7 @@ export default function ProductDetailModal({ product, isOpen, onClose, onOpenCar
                     value={reviewComment}
                     onChange={(e) => setReviewComment(e.target.value)}
                     placeholder="Share how this product met your expectations (verified purchase required)..."
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 outline-hidden"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-hidden"
                   />
                 </div>
 
@@ -447,7 +447,7 @@ export default function ProductDetailModal({ product, isOpen, onClose, onOpenCar
                   <button
                     type="submit"
                     disabled={submittingReview}
-                    className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white text-xs font-semibold rounded-lg transition"
+                    className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white text-xs font-semibold rounded-lg transition"
                   >
                     {submittingReview ? 'Posting...' : 'Submit Review'}
                   </button>

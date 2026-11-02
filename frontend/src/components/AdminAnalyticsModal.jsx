@@ -56,7 +56,7 @@ export default function AdminAnalyticsModal({ isOpen, onClose }) {
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
               📊
             </div>
             <div>
@@ -104,7 +104,7 @@ export default function AdminAnalyticsModal({ isOpen, onClose }) {
               onClick={() => setActiveTab(tab.id)}
               className={`px-3 py-2 text-xs font-bold border-b-2 transition whitespace-nowrap flex items-center gap-1.5 ${
                 activeTab === tab.id
-                  ? 'border-indigo-600 text-indigo-600'
+                  ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
@@ -125,7 +125,7 @@ export default function AdminAnalyticsModal({ isOpen, onClose }) {
 
           {loading ? (
             <div className="py-20 text-center space-y-2">
-              <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
+              <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
               <p className="text-xs text-slate-500 font-medium">Aggregating marketplace metrics...</p>
             </div>
           ) : (
@@ -135,12 +135,12 @@ export default function AdminAnalyticsModal({ isOpen, onClose }) {
                 <div className="space-y-6">
                   {/* Top KPI Cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div className="p-4 bg-indigo-50/60 border border-indigo-100 rounded-xl">
-                      <div className="text-[11px] font-bold uppercase text-indigo-700">Gross Revenue</div>
-                      <div className="text-2xl font-black text-indigo-950 mt-1">
+                    <div className="p-4 bg-blue-50/60 border border-blue-100 rounded-xl">
+                      <div className="text-[11px] font-bold uppercase text-blue-700">Gross Revenue</div>
+                      <div className="text-2xl font-black text-blue-950 mt-1">
                         ${Number(overview.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </div>
-                      <div className="text-[10px] text-indigo-600 mt-1">From verified paid orders</div>
+                      <div className="text-[10px] text-blue-600 mt-1">From verified paid orders</div>
                     </div>
 
                     <div className="p-4 bg-emerald-50/60 border border-emerald-100 rounded-xl">
@@ -161,12 +161,12 @@ export default function AdminAnalyticsModal({ isOpen, onClose }) {
                       <div className="text-[10px] text-amber-600 mt-1">Per paid checkout</div>
                     </div>
 
-                    <div className="p-4 bg-purple-50/60 border border-purple-100 rounded-xl">
-                      <div className="text-[11px] font-bold uppercase text-purple-700">Discounts Given</div>
-                      <div className="text-2xl font-black text-purple-950 mt-1">
+                    <div className="p-4 bg-sky-50/60 border border-sky-100 rounded-xl">
+                      <div className="text-[11px] font-bold uppercase text-sky-700">Discounts Given</div>
+                      <div className="text-2xl font-black text-sky-950 mt-1">
                         ${Number(overview.total_discounts_given || 0).toFixed(2)}
                       </div>
-                      <div className="text-[10px] text-purple-600 mt-1">From applied coupons</div>
+                      <div className="text-[10px] text-sky-600 mt-1">From applied coupons</div>
                     </div>
                   </div>
 
@@ -204,7 +204,7 @@ export default function AdminAnalyticsModal({ isOpen, onClose }) {
                             <span className="font-bold text-slate-800">{m.month}</span>
                             <div className="flex items-center gap-6">
                               <span className="text-slate-500">{m.order_count} orders</span>
-                              <span className="font-extrabold text-indigo-600">${Number(m.revenue).toFixed(2)}</span>
+                              <span className="font-extrabold text-blue-600">${Number(m.revenue).toFixed(2)}</span>
                             </div>
                           </div>
                         ))}
@@ -283,7 +283,7 @@ export default function AdminAnalyticsModal({ isOpen, onClose }) {
                               <div className="text-[11px] text-slate-400">Sold by {p.vendor_name}</div>
                             </div>
                             <div className="text-right">
-                              <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-md mr-3">
+                              <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-md mr-3">
                                 {p.total_sold} units
                               </span>
                               <span className="font-extrabold text-slate-900">${Number(p.total_sales).toFixed(2)}</span>
@@ -343,7 +343,7 @@ export default function AdminAnalyticsModal({ isOpen, onClose }) {
                           </div>
                           <div className="text-right">
                             <div className="text-slate-500 text-[11px]">{v.total_orders} orders</div>
-                            <div className="font-extrabold text-indigo-600 text-sm">
+                            <div className="font-extrabold text-blue-600 text-sm">
                               ${Number(v.total_revenue).toFixed(2)}
                             </div>
                           </div>

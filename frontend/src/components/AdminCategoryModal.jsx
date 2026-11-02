@@ -136,15 +136,15 @@ export default function AdminCategoryModal({ isOpen, onClose, onCategoriesUpdate
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 text-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white">
           <div className="flex items-center gap-3">
-            <span className="p-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 text-lg">
+            <span className="p-2 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 text-lg">
               🛡️
             </span>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold tracking-tight">Category Administration</h2>
-                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-purple-950 text-purple-400 border border-purple-800">
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-800">
                   Admin Only
                 </span>
               </div>
@@ -206,7 +206,7 @@ export default function AdminCategoryModal({ isOpen, onClose, onCategoriesUpdate
               type="button"
               id="admin-create-category-btn"
               onClick={handleOpenCreate}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-xl shadow-xs transition flex items-center gap-1.5 w-fit"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-xs transition flex items-center gap-1.5 w-fit"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -217,15 +217,15 @@ export default function AdminCategoryModal({ isOpen, onClose, onCategoriesUpdate
 
           {/* Inline Create / Edit Form */}
           {formMode && (
-            <div className="p-5 bg-purple-50/50 border border-purple-200 rounded-xl space-y-4 animate-in fade-in">
+            <div className="p-5 bg-blue-50/50 border border-blue-200 rounded-xl space-y-4 animate-in fade-in">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-purple-900">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-blue-900">
                   {formMode === 'create' ? 'Create New Category' : `Edit Category: ${editingCategory?.name}`}
                 </h4>
                 <button
                   type="button"
                   onClick={() => setFormMode(null)}
-                  className="text-purple-400 hover:text-purple-600 font-bold text-sm"
+                  className="text-blue-400 hover:text-blue-600 font-bold text-sm"
                 >
                   &times;
                 </button>
@@ -243,7 +243,7 @@ export default function AdminCategoryModal({ isOpen, onClose, onCategoriesUpdate
                     placeholder="e.g. Sports & Outdoors"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -256,7 +256,7 @@ export default function AdminCategoryModal({ isOpen, onClose, onCategoriesUpdate
                     placeholder="Brief description for customer catalog browsing..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -271,7 +271,7 @@ export default function AdminCategoryModal({ isOpen, onClose, onCategoriesUpdate
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-4 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-xs disabled:opacity-50"
+                    className="px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold shadow-xs disabled:opacity-50"
                   >
                     {saving ? 'Saving...' : formMode === 'create' ? 'Create Category' : 'Save Changes'}
                   </button>
@@ -310,7 +310,7 @@ export default function AdminCategoryModal({ isOpen, onClose, onCategoriesUpdate
                         {cat.description || '—'}
                       </td>
                       <td className="py-3 px-3 whitespace-nowrap">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                           {cat.product_count || 0} products
                         </span>
                       </td>
@@ -319,7 +319,7 @@ export default function AdminCategoryModal({ isOpen, onClose, onCategoriesUpdate
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(cat)}
-                            className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 text-[11px] font-medium rounded transition"
+                            className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-medium rounded transition"
                           >
                             Edit
                           </button>

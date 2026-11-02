@@ -265,7 +265,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-xs">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm font-bold shadow-xs">
               💳
             </div>
             <div>
@@ -297,7 +297,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
           {placedOrders ? (
             /* Post-Checkout / Payment View */
             <div className="text-center py-4 space-y-5">
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-bold shadow-inner ${paymentResult ? 'bg-emerald-100 text-emerald-600' : 'bg-indigo-100 text-indigo-600'}`}>
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-bold shadow-inner ${paymentResult ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-100 text-blue-600'}`}>
                 {paymentResult ? '✓' : '💳'}
               </div>
 
@@ -328,7 +328,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                     <div className="flex items-center justify-between text-xs">
                       <div>
                         <span className="font-semibold text-slate-700">Order ID: </span>
-                        <span className="font-mono text-indigo-600 font-bold">{ord.id}</span>
+                        <span className="font-mono text-blue-600 font-bold">{ord.id}</span>
                       </div>
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${paymentResult ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
                         {paymentResult ? 'Paid & Confirmed' : 'Payment Pending'}
@@ -345,7 +345,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                         <button
                           type="button"
                           onClick={() => invoiceApi.downloadInvoice(ord.id, ord.invoiceNumber)}
-                          className="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                          className="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
                         >
                           📄 Download PDF
                         </button>
@@ -486,7 +486,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                     handleClose();
                     if (onOpenOrders) onOpenOrders();
                   }}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-indigo-200 transition"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-blue-200 transition"
                 >
                   View My Orders
                 </button>
@@ -518,7 +518,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                     handleClose();
                     if (onOpenOrders) onOpenOrders();
                   }}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-xs transition"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-xs transition"
                 >
                   View My Orders & Pay
                 </button>
@@ -552,7 +552,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                       <div className="truncate max-w-[280px]">
                         <span className="font-medium text-slate-800">{item.name}</span>
                         <span className="text-slate-400 ml-1.5">x{item.quantity}</span>
-                        <span className="text-[10px] text-indigo-600 block">Sold by {item.vendor}</span>
+                        <span className="text-[10px] text-blue-600 block">Sold by {item.vendor}</span>
                       </div>
                       <div className="font-semibold text-slate-900">
                         ${Number(item.subtotal).toFixed(2)}
@@ -588,13 +588,13 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                           value={couponCode}
                           onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                           placeholder="e.g. WELCOME10 or FLAT50"
-                          className="flex-1 px-3 py-1.5 border border-slate-300 rounded-lg text-xs uppercase font-medium focus:ring-2 focus:ring-indigo-500 outline-hidden"
+                          className="flex-1 px-3 py-1.5 border border-slate-300 rounded-lg text-xs uppercase font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
                         />
                         <button
                           type="button"
                           disabled={isValidatingCoupon || !couponCode.trim()}
                           onClick={handleApplyCoupon}
-                          className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white text-xs font-semibold rounded-lg transition"
+                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white text-xs font-semibold rounded-lg transition"
                         >
                           {isValidatingCoupon ? 'Checking...' : 'Apply'}
                         </button>
@@ -615,7 +615,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
 
                 <div className="border-t border-slate-200 pt-2 flex justify-between items-center text-sm font-bold text-slate-900">
                   <span>Total Due:</span>
-                  <span className="text-indigo-600 text-base">
+                  <span className="text-blue-600 text-base">
                     ${(appliedCoupon ? appliedCoupon.finalAmount : subtotal).toFixed(2)}
                   </span>
                 </div>
@@ -638,7 +638,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                     onChange={handleChange}
                     placeholder="e.g. 123 Market St, Suite 400"
                     required
-                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden"
+                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                   />
                 </div>
 
@@ -651,7 +651,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                       value={formData.city}
                       onChange={handleChange}
                       placeholder="e.g. San Francisco"
-                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden"
+                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                     />
                   </div>
                   <div>
@@ -662,7 +662,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                       value={formData.state}
                       onChange={handleChange}
                       placeholder="e.g. CA"
-                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden"
+                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                     />
                   </div>
                 </div>
@@ -676,7 +676,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                       value={formData.postalCode}
                       onChange={handleChange}
                       placeholder="e.g. 94105"
-                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden"
+                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                     />
                   </div>
                   <div>
@@ -687,14 +687,14 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="e.g. 555-0199"
-                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden"
+                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Razorpay Test Mode notice */}
-              <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-xs text-indigo-900 flex items-start gap-2">
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-start gap-2">
                 <span className="text-base">🛡️</span>
                 <div>
                   <strong>Razorpay Test Mode Integration:</strong> Payments are processed safely in development test mode. No real money or real card details are ever charged.
@@ -714,8 +714,19 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                 <button
                   type="submit"
                   disabled={loading || items.length === 0}
-                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white text-xs font-semibold rounded-lg shadow-sm shadow-indigo-200 transition flex items-center gap-2"
+                  className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white text-xs font-semibold rounded-lg shadow-sm shadow-blue-200 transition flex items-center gap-2"
                 >
+                  {loading ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Placing Order & Preparing Payment...</span>
+                    </>
+                  ) : (
+                    <span>Proceed to Payment (${subtotal.toFixed(2)})</span>
+                  )}
+                </button>
+              </div>
+            </form>
                   {loading ? (
                     <>
                       <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

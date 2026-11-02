@@ -4,8 +4,8 @@ import { adminOrderApi } from '../services/api';
 const STATUS_COLORS = {
   pending: 'bg-amber-100 text-amber-800 border-amber-200',
   placed: 'bg-blue-100 text-blue-800 border-blue-200',
-  confirmed: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-  processing: 'bg-purple-100 text-purple-800 border-purple-200',
+  confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
+  processing: 'bg-sky-100 text-sky-800 border-sky-200',
   packed: 'bg-cyan-100 text-cyan-800 border-cyan-200',
   shipped: 'bg-blue-100 text-blue-800 border-blue-200',
   delivered: 'bg-emerald-100 text-emerald-800 border-emerald-200',
@@ -64,9 +64,9 @@ export default function AdminOrdersModal({ isOpen, onClose }) {
       <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden border border-slate-200 animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[85vh]">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shrink-0">
+        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white shrink-0">
           <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-lg">
+            <span className="p-2 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 text-lg">
               🛡️
             </span>
             <div>
@@ -92,7 +92,7 @@ export default function AdminOrdersModal({ isOpen, onClose }) {
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1 rounded-full font-medium transition whitespace-nowrap capitalize ${
                 statusFilter === st
-                  ? 'bg-indigo-600 text-white shadow-xs'
+                  ? 'bg-blue-600 text-white shadow-xs'
                   : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
               }`}
             >
@@ -112,7 +112,7 @@ export default function AdminOrdersModal({ isOpen, onClose }) {
         <div className="p-6 overflow-y-auto flex-1">
           {loading ? (
             <div className="py-16 text-center">
-              <div className="w-7 h-7 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               <p className="text-xs text-slate-500">Loading platform orders...</p>
             </div>
           ) : selectedOrder ? (
@@ -122,7 +122,7 @@ export default function AdminOrdersModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={() => setSelectedOrder(null)}
-                  className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                  className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
                 >
                   ← Back to All Orders
                 </button>
@@ -154,7 +154,7 @@ export default function AdminOrdersModal({ isOpen, onClose }) {
                 </div>
                 <div>
                   <span className="text-slate-500 block">Total Amount</span>
-                  <span className="text-base font-extrabold text-indigo-600 block">
+                  <span className="text-base font-extrabold text-blue-600 block">
                     ${Number(selectedOrder.total_amount).toFixed(2)}
                   </span>
                 </div>
@@ -216,7 +216,7 @@ export default function AdminOrdersModal({ isOpen, onClose }) {
                 <tbody className="divide-y divide-slate-100">
                   {orders.map((ord) => (
                     <tr key={ord.id} className="hover:bg-slate-50/80 transition cursor-pointer" onClick={() => handleSelectOrder(ord.id)}>
-                      <td className="py-3 px-3 font-mono text-indigo-600 font-bold">
+                      <td className="py-3 px-3 font-mono text-blue-600 font-bold">
                         #{ord.id.slice(0, 8)}...
                       </td>
                       <td className="py-3 px-3 text-slate-800 font-medium">
@@ -240,7 +240,7 @@ export default function AdminOrdersModal({ isOpen, onClose }) {
                             e.stopPropagation();
                             handleSelectOrder(ord.id);
                           }}
-                          className="px-2.5 py-1 bg-white border border-slate-300 hover:border-indigo-500 hover:text-indigo-600 rounded text-[11px] font-semibold transition"
+                          className="px-2.5 py-1 bg-white border border-slate-300 hover:border-blue-500 hover:text-blue-600 rounded text-[11px] font-semibold transition"
                         >
                           View
                         </button>

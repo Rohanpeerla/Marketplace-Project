@@ -35,7 +35,7 @@ export default function Navbar({
           {/* Logo & Brand */}
           <div className="flex items-center space-x-3">
             <a href="#" className="flex items-center space-x-2.5 group">
-              <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-indigo-200 group-hover:bg-indigo-700 transition">
+              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-blue-200 group-hover:bg-blue-700 transition">
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                   <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -43,8 +43,8 @@ export default function Navbar({
                 </svg>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-indigo-600 transition">
-                  Market<span className="text-indigo-600">Hub</span>
+                <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition">
+                  Market<span className="text-blue-600">Hub</span>
                 </span>
                 <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-500">
                   Multi-Vendor
@@ -55,11 +55,11 @@ export default function Navbar({
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
-            <a href="#home" className="text-indigo-600 hover:text-indigo-700 transition">Home</a>
-            <a href="#products" className="hover:text-indigo-600 transition">Products</a>
-            <a href="#auth-verification-section" className="hover:text-indigo-600 transition flex items-center gap-1.5">
+            <a href="#home" className="text-blue-600 hover:text-blue-700 transition">Home</a>
+            <a href="#products" className="hover:text-blue-600 transition">Products</a>
+            <a href="#auth-verification-section" className="hover:text-blue-600 transition flex items-center gap-1.5">
               <span>RBAC Testing</span>
-              <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">Stage 3</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-100 text-blue-700">Stage 3</span>
             </a>
           </nav>
 
@@ -93,13 +93,13 @@ export default function Navbar({
                       type="button"
                       id="nav-cart-btn"
                       onClick={onOpenCart}
-                      className="relative px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition flex items-center gap-1.5 shadow-xs"
+                      className="relative px-3.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg border border-blue-200 transition flex items-center gap-1.5 shadow-xs"
                     >
-                      <svg className="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                       </svg>
                       <span>Cart</span>
-                      <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-indigo-600 text-white min-w-[18px] text-center">
+                      <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-blue-600 text-white min-w-[18px] text-center">
                         {itemCount}
                       </span>
                     </button>
@@ -125,7 +125,7 @@ export default function Navbar({
                       type="button"
                       id="nav-admin-analytics-btn"
                       onClick={onOpenAdminAnalytics}
-                      className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-indigo-200 transition flex items-center gap-1.5"
+                      className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-blue-200 transition flex items-center gap-1.5"
                     >
                       <span>📈 Analytics</span>
                     </button>
@@ -143,7 +143,7 @@ export default function Navbar({
                       type="button"
                       id="nav-admin-categories-btn"
                       onClick={onOpenAdminCategories}
-                      className="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-purple-200 transition flex items-center gap-1.5"
+                      className="px-3.5 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold rounded-lg shadow-sm shadow-blue-200 transition flex items-center gap-1.5"
                     >
                       <span>🛡️ Manage Categories</span>
                     </button>
@@ -152,7 +152,7 @@ export default function Navbar({
 
                 {/* User Profile Pill */}
                 <div className="flex items-center space-x-2 pl-2 pr-3 py-1 bg-slate-50 border border-slate-200 rounded-lg">
-                  <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                  <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
                     {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                   </div>
                   <div className="flex flex-col text-left">
@@ -177,7 +177,7 @@ export default function Navbar({
                 <button
                   type="button"
                   id="nav-login-button"
-                  className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-indigo-600 transition"
+                  className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 transition"
                   onClick={() => onOpenAuthModal && onOpenAuthModal('login')}
                 >
                   Sign In
@@ -185,7 +185,7 @@ export default function Navbar({
                 <button
                   type="button"
                   id="nav-register-button"
-                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm shadow-indigo-200 transition"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm shadow-blue-200 transition"
                   onClick={() => onOpenAuthModal && onOpenAuthModal('register')}
                 >
                   Register
@@ -218,7 +218,7 @@ export default function Navbar({
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-3">
-          <a href="#home" className="block text-base font-medium text-indigo-600">Home</a>
+          <a href="#home" className="block text-base font-medium text-blue-600">Home</a>
           <a href="#products" className="block text-base font-medium text-slate-700">Products</a>
           <a href="#auth-verification-section" className="block text-base font-medium text-slate-700">RBAC Testing (Stage 3)</a>
 
@@ -246,7 +246,7 @@ export default function Navbar({
                       setMobileMenuOpen(false);
                       if (onOpenCart) onOpenCart();
                     }}
-                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs flex items-center justify-center gap-2"
+                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs flex items-center justify-center gap-2"
                   >
                     <span>🛒 Shopping Cart ({itemCount})</span>
                   </button>
@@ -274,7 +274,7 @@ export default function Navbar({
                       setMobileMenuOpen(false);
                       if (onOpenAdminAnalytics) onOpenAdminAnalytics();
                     }}
-                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs"
+                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs"
                   >
                     📈 Analytics Dashboard
                   </button>
@@ -296,7 +296,7 @@ export default function Navbar({
                       setMobileMenuOpen(false);
                       if (onOpenAdminCategories) onOpenAdminCategories();
                     }}
-                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-lg shadow-xs"
+                    className="w-full text-center py-2.5 text-sm font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg shadow-xs"
                   >
                     🛡️ Manage Categories
                   </button>
@@ -339,7 +339,7 @@ export default function Navbar({
                 </button>
                 <button
                   type="button"
-                  className="w-full text-center py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg"
+                  className="w-full text-center py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     if (onOpenAuthModal) onOpenAuthModal('register');

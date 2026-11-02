@@ -35,7 +35,7 @@ export default function CartModal({ isOpen, onClose, onCheckout }) {
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
+            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-sm shadow-blue-200">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
@@ -44,7 +44,7 @@ export default function CartModal({ isOpen, onClose, onCheckout }) {
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span>Shopping Cart</span>
                 {itemCount > 0 && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-semibold">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold">
                     {itemCount} {itemCount === 1 ? 'item' : 'items'}
                   </span>
                 )}
@@ -81,12 +81,12 @@ export default function CartModal({ isOpen, onClose, onCheckout }) {
         <div className="p-6 overflow-y-auto flex-1">
           {isLoading && items.length === 0 ? (
             <div className="py-12 text-center">
-              <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+              <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
               <p className="text-xs text-slate-500">Loading your cart...</p>
             </div>
           ) : items.length === 0 ? (
             <div className="py-12 text-center">
-              <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
@@ -102,7 +102,7 @@ export default function CartModal({ isOpen, onClose, onCheckout }) {
                   const target = document.getElementById('products');
                   if (target) target.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="mt-5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-indigo-200 transition"
+                className="mt-5 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-blue-200 transition"
               >
                 Start Shopping
               </button>
@@ -137,7 +137,7 @@ export default function CartModal({ isOpen, onClose, onCheckout }) {
                       </div>
 
                       <div className="min-w-0">
-                        <div className="text-[11px] font-semibold text-indigo-600 flex items-center gap-1">
+                        <div className="text-[11px] font-semibold text-blue-600 flex items-center gap-1">
                           <span>{item.vendor || 'Independent Merchant'}</span>
                         </div>
                         <h4 className="text-sm font-bold text-slate-900 truncate" title={item.name}>
@@ -209,7 +209,7 @@ export default function CartModal({ isOpen, onClose, onCheckout }) {
 
               {/* Multi-vendor breakdown note */}
               {cart?.vendors && cart.vendors.length > 1 && (
-                <div className="p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl text-xs text-indigo-800">
+                <div className="p-3 bg-blue-50/70 border border-blue-100 rounded-xl text-xs text-blue-800">
                   <span className="font-semibold">Multi-Vendor Cart:</span> Containing items from{' '}
                   <span className="font-bold">{cart.vendors.length} independent vendors</span>. Items will be fulfilled by each merchant upon checkout in Stage 7.
                 </div>
@@ -242,7 +242,7 @@ export default function CartModal({ isOpen, onClose, onCheckout }) {
                   onClose();
                   if (onCheckout) onCheckout();
                 }}
-                className="flex-1 sm:flex-none px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-indigo-200 transition flex items-center justify-center gap-1.5"
+                className="flex-1 sm:flex-none px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-blue-200 transition flex items-center justify-center gap-1.5"
               >
                 <span>Proceed to Checkout</span>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

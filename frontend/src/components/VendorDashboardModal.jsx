@@ -16,8 +16,8 @@ const VENDOR_TRANSITIONS = {
 const ORDER_STATUS_CLASSES = {
   pending: 'bg-amber-100 text-amber-800 border-amber-200',
   placed: 'bg-blue-100 text-blue-800 border-blue-200',
-  confirmed: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-  processing: 'bg-purple-100 text-purple-800 border-purple-200',
+  confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
+  processing: 'bg-sky-100 text-sky-800 border-sky-200',
   packed: 'bg-cyan-100 text-cyan-800 border-cyan-200',
   shipped: 'bg-blue-100 text-blue-800 border-blue-200',
   delivered: 'bg-emerald-100 text-emerald-800 border-emerald-200',
@@ -356,9 +356,9 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white">
           <div className="flex items-center gap-3">
-            <span className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-lg">
+            <span className="p-2 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 text-lg">
               🏪
             </span>
             <div>
@@ -461,7 +461,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
             onClick={() => setActiveTab('products')}
             className={`py-3.5 border-b-2 transition flex items-center gap-2 ${
               activeTab === 'products'
-                ? 'border-indigo-600 text-indigo-600'
+                ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
@@ -476,12 +476,12 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
             onClick={() => setActiveTab('orders')}
             className={`py-3.5 border-b-2 transition flex items-center gap-2 ${
               activeTab === 'orders'
-                ? 'border-indigo-600 text-indigo-600'
+                ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
             <span>📋 Customer Orders</span>
-            <span className="px-2 py-0.2 rounded-full text-xs bg-indigo-100 text-indigo-700 font-bold">
+            <span className="px-2 py-0.2 rounded-full text-xs bg-blue-100 text-blue-700 font-bold">
               {vendorOrders.length}
             </span>
           </button>
@@ -491,7 +491,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
             onClick={() => setActiveTab('profile')}
             className={`py-3.5 border-b-2 transition flex items-center gap-2 ${
               activeTab === 'profile'
-                ? 'border-indigo-600 text-indigo-600'
+                ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
@@ -519,7 +519,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                   onClick={handleOpenAddProduct}
                   className={`px-4 py-2 rounded-xl text-xs font-semibold shadow-xs transition flex items-center gap-1.5 ${
                     isApproved
-                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200 cursor-pointer'
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-200 cursor-pointer'
                       : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                   }`}
                   title={!isApproved ? 'Requires approved vendor status' : 'Add new product'}
@@ -549,7 +549,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     <button
                       type="button"
                       onClick={handleOpenAddProduct}
-                      className="mt-4 px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition"
+                      className="mt-4 px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition"
                     >
                       Create First Product
                     </button>
@@ -641,7 +641,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                               <button
                                 type="button"
                                 onClick={() => handleOpenEditProduct(prod)}
-                                className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[11px] font-medium rounded transition"
+                                className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-medium rounded transition"
                               >
                                 Edit
                               </button>
@@ -696,7 +696,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     maxLength={150}
                     value={businessName}
                     onChange={(e) => setBusinessName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                   />
                 </div>
 
@@ -709,7 +709,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     required
                     value={businessEmail}
                     onChange={(e) => setBusinessEmail(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                   />
                 </div>
 
@@ -723,7 +723,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                       placeholder="+1-555-0100"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                     />
                   </div>
 
@@ -749,7 +749,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     placeholder="Suite, Street Address, City, State, ZIP"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                   />
                 </div>
 
@@ -757,7 +757,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                   <button
                     type="submit"
                     disabled={savingProfile || loadingProfile}
-                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-indigo-200 transition disabled:opacity-50"
+                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-blue-200 transition disabled:opacity-50"
                   >
                     {savingProfile ? 'Saving Changes...' : 'Save Profile Changes'}
                   </button>
@@ -771,7 +771,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
             <div className="space-y-4">
               {loadingOrders ? (
                 <div className="py-16 text-center">
-                  <div className="w-7 h-7 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                  <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
                   <p className="text-xs text-slate-500">Loading incoming orders...</p>
                 </div>
               ) : selectedOrderDetails ? (
@@ -781,7 +781,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     <button
                       type="button"
                       onClick={() => setSelectedOrderDetails(null)}
-                      className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                      className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
                     >
                       ← Back to All Orders
                     </button>
@@ -813,7 +813,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     </div>
                     <div>
                       <span className="text-slate-500 block">Order Total</span>
-                      <span className="text-base font-extrabold text-indigo-600 block">
+                      <span className="text-base font-extrabold text-blue-600 block">
                         ${Number(selectedOrderDetails.total_amount).toFixed(2)}
                       </span>
                     </div>
@@ -854,7 +854,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                             type="button"
                             disabled={updatingOrderId === selectedOrderDetails.id}
                             onClick={() => handleUpdateOrderStatus(selectedOrderDetails.id, nextSt)}
-                            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-xs transition capitalize disabled:opacity-50"
+                            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-xs transition capitalize disabled:opacity-50"
                           >
                             Mark as {nextSt}
                           </button>
@@ -894,7 +894,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
 
                         return (
                           <tr key={ord.id} className="hover:bg-slate-50/80 transition cursor-pointer" onClick={() => setSelectedOrderDetails(ord)}>
-                            <td className="py-3 px-3 font-mono text-indigo-600 font-bold">
+                            <td className="py-3 px-3 font-mono text-blue-600 font-bold">
                               #{ord.id.slice(0, 8)}...
                             </td>
                             <td className="py-3 px-3 text-slate-800 font-medium">
@@ -918,7 +918,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                                     type="button"
                                     disabled={updatingOrderId === ord.id}
                                     onClick={() => handleUpdateOrderStatus(ord.id, nextMainStatus)}
-                                    className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded text-[11px] font-semibold transition capitalize disabled:opacity-50"
+                                    className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded text-[11px] font-semibold transition capitalize disabled:opacity-50"
                                   >
                                     → {nextMainStatus}
                                   </button>
@@ -978,7 +978,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     placeholder="e.g. Ergonomic Keyboard"
                     value={pName}
                     onChange={(e) => setPName(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                   />
                 </div>
 
@@ -995,7 +995,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                       placeholder="49.99"
                       value={pPrice}
                       onChange={(e) => setPPrice(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                     />
                   </div>
 
@@ -1010,7 +1010,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                       placeholder="10"
                       value={pStock}
                       onChange={(e) => setPStock(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                     />
                   </div>
                 </div>
@@ -1023,7 +1023,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     <select
                       value={pCategoryId}
                       onChange={(e) => setPCategoryId(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                     >
                       <option value="">Select a Category</option>
                       {categories.map((c) => (
@@ -1041,7 +1041,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     <select
                       value={pStatus}
                       onChange={(e) => setPStatus(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                     >
                       <option value="active">Active (Visible)</option>
                       <option value="inactive">Inactive (Hidden)</option>
@@ -1059,7 +1059,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                       placeholder="https://images.unsplash.com/photo-..."
                       value={pImageUrl}
                       onChange={(e) => setPImageUrl(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                     />
                   </div>
                 )}
@@ -1073,7 +1073,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     placeholder="Detailed specifications, features, and warranty details..."
                     value={pDescription}
                     onChange={(e) => setPDescription(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                   />
                 </div>
 
@@ -1088,7 +1088,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                   <button
                     type="submit"
                     disabled={savingProduct}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold shadow-xs disabled:opacity-50 transition"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold shadow-xs disabled:opacity-50 transition"
                   >
                     {savingProduct ? 'Saving...' : productModalMode === 'add' ? 'Publish Product' : 'Save Changes'}
                   </button>
@@ -1150,7 +1150,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                         </div>
                         <div className="p-2 flex items-center justify-between bg-white text-[10px]">
                           {img.is_primary ? (
-                            <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 font-bold uppercase">
+                            <span className="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 font-bold uppercase">
                               Primary
                             </span>
                           ) : (
@@ -1184,7 +1184,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     placeholder="https://images.unsplash.com/photo-..."
                     value={newImageUrl}
                     onChange={(e) => setNewImageUrl(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                   />
                 </div>
 
@@ -1194,7 +1194,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     id="new-image-primary"
                     checked={newImageIsPrimary}
                     onChange={(e) => setNewImageIsPrimary(e.target.checked)}
-                    className="rounded text-indigo-600 focus:ring-indigo-500"
+                    className="rounded text-blue-600 focus:ring-blue-500"
                   />
                   <label htmlFor="new-image-primary" className="text-slate-700 cursor-pointer">
                     Set as Primary (Hero) Image
@@ -1212,7 +1212,7 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                   <button
                     type="submit"
                     disabled={savingImage || !newImageUrl.trim()}
-                    className="px-4 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold disabled:opacity-50"
+                    className="px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold disabled:opacity-50"
                   >
                     {savingImage ? 'Adding...' : 'Add Image'}
                   </button>

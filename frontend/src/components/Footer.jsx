@@ -7,11 +7,11 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-base">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-base">
                 M
               </div>
               <span className="text-lg font-bold text-slate-900">
-                Market<span className="text-indigo-600">Hub</span>
+                Market<span className="text-blue-600">Hub</span>
               </span>
             </div>
             <p className="text-sm text-slate-500 max-w-sm">
@@ -28,9 +28,9 @@ export default function Footer() {
               Platform Roles
             </h4>
             <ul className="space-y-2 text-sm text-slate-600">
-              <li><span className="hover:text-indigo-600 cursor-pointer">Customer Experience</span></li>
-              <li><span className="hover:text-indigo-600 cursor-pointer">Vendor Portal</span></li>
-              <li><span className="hover:text-indigo-600 cursor-pointer">Admin Governance</span></li>
+              <li><span className="hover:text-blue-600 cursor-pointer">Customer Experience</span></li>
+              <li><span className="hover:text-blue-600 cursor-pointer">Vendor Portal</span></li>
+              <li><span className="hover:text-blue-600 cursor-pointer">Admin Governance</span></li>
             </ul>
           </div>
 
@@ -40,9 +40,9 @@ export default function Footer() {
               Architecture
             </h4>
             <ul className="space-y-2 text-sm text-slate-600">
-              <li><span className="hover:text-indigo-600 cursor-pointer">RESTful API Design</span></li>
-              <li><span className="hover:text-indigo-600 cursor-pointer">PostgreSQL Persistence</span></li>
-              <li><span className="hover:text-indigo-600 cursor-pointer">Modular Monorepo Structure</span></li>
+              <li><span className="hover:text-blue-600 cursor-pointer">RESTful API Design</span></li>
+              <li><span className="hover:text-blue-600 cursor-pointer">PostgreSQL Persistence</span></li>
+              <li><span className="hover:text-blue-600 cursor-pointer">Modular Monorepo Structure</span></li>
             </ul>
           </div>
 

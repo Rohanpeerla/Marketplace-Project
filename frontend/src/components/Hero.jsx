@@ -1,23 +1,23 @@
 export default function Hero({ onOpenAuthModal }) {
   return (
-    <section id="home" className="relative overflow-hidden bg-gradient-to-b from-indigo-50/60 via-white to-slate-50 py-16 sm:py-24 border-b border-slate-200">
+    <section id="home" className="relative overflow-hidden bg-gradient-to-b from-blue-50/70 via-white to-slate-50 py-16 sm:py-24 border-b border-slate-200">
       
       {/* Background Glow Accents */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none opacity-40 blur-3xl -z-10 bg-gradient-to-tr from-indigo-300 via-purple-200 to-pink-200 rounded-full"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none opacity-40 blur-3xl -z-10 bg-gradient-to-tr from-blue-400 via-sky-300 to-cyan-200 rounded-full"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto">
           
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 border border-indigo-200 mb-6">
-            <span className="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200 mb-6">
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
             Multi-Vendor E-Commerce Platform
           </div>
 
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight">
             The Modern Marketplace for{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-600">
               Shoppers & Vendors
             </span>
           </h1>
@@ -31,7 +31,7 @@ export default function Hero({ onOpenAuthModal }) {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="#auth-verification-section"
-              className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-200 transition transform hover:-translate-y-0.5 text-center"
+              className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-200 transition transform hover:-translate-y-0.5 text-center"
             >
               Test RBAC Access
             </a>

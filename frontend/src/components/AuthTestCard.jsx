@@ -62,10 +62,10 @@ export default function AuthTestCard({ onOpenAuthModal }) {
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="auth-verification-section">
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-5 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="px-6 py-5 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="inline-flex items-center justify-center p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+              <span className="inline-flex items-center justify-center p-1.5 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
@@ -147,7 +147,7 @@ export default function AuthTestCard({ onOpenAuthModal }) {
               {isAuthenticated && user ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
+                    <div className="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
                       {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                     <div>
@@ -182,7 +182,7 @@ export default function AuthTestCard({ onOpenAuthModal }) {
                     </p>
                     <p className="flex justify-between">
                       <span className="text-slate-400">JWT Token:</span>
-                      <span className="font-mono text-indigo-600 truncate max-w-[200px]">
+                      <span className="font-mono text-blue-600 truncate max-w-[200px]">
                         {token ? `${token.substring(0, 16)}...${token.substring(token.length - 8)}` : 'None'}
                       </span>
                     </p>
@@ -197,7 +197,7 @@ export default function AuthTestCard({ onOpenAuthModal }) {
                     <button
                       type="button"
                       onClick={() => onOpenAuthModal('login')}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition"
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition"
                     >
                       Sign In
                     </button>

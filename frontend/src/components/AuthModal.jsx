@@ -93,7 +93,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
             id="auth-tab-login"
             className={`flex-1 py-4 text-sm font-semibold transition border-b-2 ${
               activeTab === 'login'
-                ? 'border-indigo-600 text-indigo-600 bg-white'
+                ? 'border-blue-600 text-blue-600 bg-white'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
             onClick={() => {
@@ -109,7 +109,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
             id="auth-tab-register"
             className={`flex-1 py-4 text-sm font-semibold transition border-b-2 ${
               activeTab === 'register'
-                ? 'border-indigo-600 text-indigo-600 bg-white'
+                ? 'border-blue-600 text-blue-600 bg-white'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
             onClick={() => {
@@ -162,7 +162,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                   id="login-email-input"
                   required
                   placeholder="name@example.com"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                 />
@@ -177,7 +177,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                   id="login-password-input"
                   required
                   placeholder="Enter your password"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                 />
@@ -215,7 +215,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                 type="submit"
                 id="login-submit-button"
                 disabled={loading}
-                className="w-full mt-2 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm rounded-lg shadow-sm shadow-indigo-200 transition disabled:opacity-50"
+                className="w-full mt-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-sm rounded-lg shadow-sm shadow-blue-200 transition disabled:opacity-50"
               >
                 {loading ? 'Authenticating...' : 'Sign In'}
               </button>
@@ -234,7 +234,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                   id="register-name-input"
                   required
                   placeholder="e.g. Jane Smith"
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                   value={regName}
                   onChange={(e) => setRegName(e.target.value)}
                 />
@@ -249,7 +249,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                   id="register-email-input"
                   required
                   placeholder="jane@example.com"
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
                 />
@@ -265,7 +265,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                   required
                   minLength={6}
                   placeholder="Choose a secure password"
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
                 />
@@ -281,7 +281,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                     onClick={() => setRegRole('customer')}
                     className={`py-2 text-xs font-medium rounded-lg border transition ${
                       regRole === 'customer'
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                        ? 'border-blue-600 bg-blue-50 text-blue-700'
                         : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
@@ -292,7 +292,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                     onClick={() => setRegRole('vendor')}
                     className={`py-2 text-xs font-medium rounded-lg border transition ${
                       regRole === 'vendor'
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                        ? 'border-blue-600 bg-blue-50 text-blue-700'
                         : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
@@ -312,7 +312,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                       type="text"
                       required
                       placeholder="e.g. Apex Electronics"
-                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                       value={regBusinessName}
                       onChange={(e) => setRegBusinessName(e.target.value)}
                     />
@@ -325,7 +325,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                     <input
                       type="tel"
                       placeholder="+1-555-0199"
-                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                       value={regPhone}
                       onChange={(e) => setRegPhone(e.target.value)}
                     />
@@ -338,7 +338,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                     <input
                       type="text"
                       placeholder="100 Innovation Way, Suite 400"
-                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                       value={regAddress}
                       onChange={(e) => setRegAddress(e.target.value)}
                     />
@@ -350,8 +350,12 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
                 type="submit"
                 id="register-submit-button"
                 disabled={loading}
-                className="w-full mt-2 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm rounded-lg shadow-sm shadow-indigo-200 transition disabled:opacity-50"
+                className="w-full mt-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-sm rounded-lg shadow-sm shadow-blue-200 transition disabled:opacity-50"
               >
+                {loading ? 'Creating Account...' : `Register as ${regRole === 'vendor' ? 'Vendor' : 'Customer'}`}
+              </button>
+            </form>
+          )}
                 {loading ? 'Creating Account...' : `Register as ${regRole === 'vendor' ? 'Vendor' : 'Customer'}`}
               </button>
             </form>

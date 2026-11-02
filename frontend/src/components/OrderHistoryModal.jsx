@@ -4,8 +4,8 @@ import { orderApi, paymentApi, invoiceApi } from '../services/api';
 const STATUS_COLORS = {
   pending: 'bg-amber-100 text-amber-800 border-amber-200',
   placed: 'bg-blue-100 text-blue-800 border-blue-200',
-  confirmed: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-  processing: 'bg-purple-100 text-purple-800 border-purple-200',
+  confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
+  processing: 'bg-sky-100 text-sky-800 border-sky-200',
   packed: 'bg-cyan-100 text-cyan-800 border-cyan-200',
   shipped: 'bg-blue-100 text-blue-800 border-blue-200',
   delivered: 'bg-emerald-100 text-emerald-800 border-emerald-200',
@@ -118,7 +118,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-xs">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm font-bold shadow-xs">
               📦
             </div>
             <div>
@@ -146,7 +146,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1 rounded-full font-medium transition whitespace-nowrap capitalize ${
                 statusFilter === st
-                  ? 'bg-indigo-600 text-white shadow-xs'
+                  ? 'bg-blue-600 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -174,7 +174,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
         <div className="p-6 overflow-y-auto flex-1">
           {loading ? (
             <div className="py-16 text-center">
-              <div className="w-7 h-7 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               <p className="text-xs text-slate-500">Loading your orders...</p>
             </div>
           ) : selectedOrder ? (
@@ -184,7 +184,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={() => setSelectedOrder(null)}
-                  className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                  className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
                 >
                   ← Back to Orders List
                 </button>
@@ -221,7 +221,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
                 </div>
                 <div>
                   <span className="text-slate-500 block">Total Amount</span>
-                  <span className="text-base font-extrabold text-indigo-600 block">
+                  <span className="text-base font-extrabold text-blue-600 block">
                     ${Number(selectedOrder.total_amount).toFixed(2)}
                   </span>
                 </div>
@@ -280,7 +280,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
                       type="button"
                       disabled={payLoading}
                       onClick={() => handlePayOrder(selectedOrder.id)}
-                      className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-xs transition disabled:opacity-50 flex items-center gap-1.5"
+                      className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-xs transition disabled:opacity-50 flex items-center gap-1.5"
                     >
                       <span>💳</span>
                       <span>{payLoading ? 'Processing...' : 'Pay Now (Test Mode)'}</span>
@@ -323,7 +323,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-indigo-600">
+                      <span className="font-mono text-xs font-bold text-blue-600">
                         #{ord.id.slice(0, 8)}...
                       </span>
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${STATUS_COLORS[ord.order_status] || 'bg-slate-100 text-slate-700'}`}>
@@ -356,7 +356,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
                         invoiceApi.downloadInvoice(ord.id, ord.invoice_number);
                       }}
                       title="Download PDF Invoice"
-                      className="px-2.5 py-1.5 bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-600 text-xs font-semibold rounded-lg transition flex items-center gap-1"
+                      className="px-2.5 py-1.5 bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-600 text-xs font-semibold rounded-lg transition flex items-center gap-1"
                     >
                       <span>📄</span>
                       <span className="hidden sm:inline">PDF</span>
@@ -368,7 +368,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
                         e.stopPropagation();
                         handleSelectOrder(ord.id);
                       }}
-                      className="px-3 py-1.5 bg-white border border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-xs font-semibold rounded-lg transition"
+                      className="px-3 py-1.5 bg-white border border-slate-300 hover:border-blue-500 hover:text-blue-600 text-xs font-semibold rounded-lg transition"
                     >
                       Details →
                     </button>
