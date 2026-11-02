@@ -356,10 +356,6 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
               </button>
             </form>
           )}
-                {loading ? 'Creating Account...' : `Register as ${regRole === 'vendor' ? 'Vendor' : 'Customer'}`}
-              </button>
-            </form>
-          )}
         </div>
       </div>
     </div>

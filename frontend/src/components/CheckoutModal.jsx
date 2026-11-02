@@ -727,17 +727,6 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                 </button>
               </div>
             </form>
-                  {loading ? (
-                    <>
-                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Placing Order & Preparing Payment...</span>
-                    </>
-                  ) : (
-                    <span>Proceed to Payment (${subtotal.toFixed(2)})</span>
-                  )}
-                </button>
-              </div>
-            </form>
           )}
         </div>
 
