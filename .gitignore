@@ -17,6 +17,10 @@ dist-ssr/
 build/
 *.local
 
+# Database and Cache dumps
+dump.rdb
+*.rdb
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
