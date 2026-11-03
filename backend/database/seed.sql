@@ -89,7 +89,7 @@ ON CONFLICT (name) DO UPDATE SET
     description = EXCLUDED.description;
 
 -- -----------------------------------------------------------------------------
--- 4. SEED PRODUCTS (6 Diverse Products)
+-- 4. SEED PRODUCTS (16 Comprehensive Marketplace Products)
 -- -----------------------------------------------------------------------------
 INSERT INTO products (id, vendor_id, category_id, name, description, price, stock, status)
 VALUES
@@ -152,6 +152,106 @@ VALUES
         89.00,
         40,
         'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000007',
+        'e0000000-0000-0000-0000-000000000001',
+        'd0000000-0000-0000-0000-000000000004',
+        'Organic Antibacterial Foaming Hand Wash (3-Pack)',
+        'Gentle plant-based botanical foaming hand cleanser infused with organic aloe vera, tea tree extract, and vitamin E for daily sanitary care.',
+        16.99,
+        80,
+        'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000008',
+        'e0000000-0000-0000-0000-000000000002',
+        'd0000000-0000-0000-0000-000000000004',
+        'Sonic Clean Ultrasonic Electric Toothbrush Pro',
+        'High-efficiency sonic plaque defense with 40,000 vibrations per minute, 5 distinct cleaning modes, smart quad-pacer timer, and 30-day wireless charge.',
+        42.50,
+        55,
+        'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000009',
+        'e0000000-0000-0000-0000-000000000001',
+        'd0000000-0000-0000-0000-000000000004',
+        'Nourishing Hydrating Body Wash & Shower Gel (500ml)',
+        'Sulfate-free refreshing body wash enriched with raw shea butter, eucalyptus essential oils, and skin-replenishing ceramides.',
+        14.50,
+        75,
+        'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000010',
+        'e0000000-0000-0000-0000-000000000002',
+        'd0000000-0000-0000-0000-000000000002',
+        'Classic Heavyweight Organic Cotton Crewneck Tee',
+        'Premium 240 GSM combed organic cotton t-shirt with reinforced double-stitched collar, relaxed drape, and pre-shrunk softness.',
+        24.00,
+        90,
+        'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000011',
+        'e0000000-0000-0000-0000-000000000001',
+        'd0000000-0000-0000-0000-000000000002',
+        'All-Day Performance Stretch Commuter Chinos',
+        'Wrinkle-resistant, breathable 4-way stretch everyday trousers tailored for seamless transitions between workspace, commute, and weekend.',
+        54.00,
+        45,
+        'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000012',
+        'e0000000-0000-0000-0000-000000000002',
+        'd0000000-0000-0000-0000-000000000002',
+        'Lightweight Packable Hooded Windbreaker Jacket',
+        'Weather-resistant ripstop shell featuring storm-sealed zip closures, breathable underarm venting, and self-stowing pocket design.',
+        68.00,
+        35,
+        'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000013',
+        'e0000000-0000-0000-0000-000000000001',
+        'd0000000-0000-0000-0000-000000000002',
+        'Breathable Cushioned Everyday Walking Sneakers',
+        'Ultralight engineered knit sneakers featuring high-rebound responsive memory foam insoles and flexible traction rubber outsoles.',
+        79.99,
+        50,
+        'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000014',
+        'e0000000-0000-0000-0000-000000000002',
+        'd0000000-0000-0000-0000-000000000003',
+        'Double-Wall Vacuum Insulated Stainless Steel Bottle (1L)',
+        'Pro-grade 18/8 stainless steel bottle keeping beverages ice-cold for 24 hours or piping hot for 12 hours with sweat-proof powder coating.',
+        26.00,
+        65,
+        'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000015',
+        'e0000000-0000-0000-0000-000000000001',
+        'd0000000-0000-0000-0000-000000000003',
+        'Smart HEPA H13 Desktop Air Purifier',
+        'Compact high-efficiency air purifier with True HEPA H13 filtration capturing 99.97% of airborne dust, pollen, odor, and smoke particles.',
+        69.00,
+        30,
+        'active'
+    ),
+    (
+        'f0000000-0000-0000-0000-000000000016',
+        'e0000000-0000-0000-0000-000000000002',
+        'd0000000-0000-0000-0000-000000000005',
+        'Hardcover Dot-Grid Executive Productivity Journal',
+        'Archival-quality 160 GSM bleed-resistant bamboo paper notebook with lay-flat thread binding, ribbon bookmark, and back document pocket.',
+        18.50,
+        70,
+        'active'
     )
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
@@ -170,7 +270,17 @@ VALUES
     ('80000000-0000-0000-0000-000000000003', 'f0000000-0000-0000-0000-000000000003', '/products/product-3.jpg', true),
     ('80000000-0000-0000-0000-000000000004', 'f0000000-0000-0000-0000-000000000004', '/products/product-4.jpg', true),
     ('80000000-0000-0000-0000-000000000005', 'f0000000-0000-0000-0000-000000000005', '/products/product-5.jpg', true),
-    ('80000000-0000-0000-0000-000000000006', 'f0000000-0000-0000-0000-000000000006', '/products/product-6.jpg', true)
+    ('80000000-0000-0000-0000-000000000006', 'f0000000-0000-0000-0000-000000000006', '/products/product-6.jpg', true),
+    ('80000000-0000-0000-0000-000000000007', 'f0000000-0000-0000-0000-000000000007', '/products/product-7.jpg', true),
+    ('80000000-0000-0000-0000-000000000008', 'f0000000-0000-0000-0000-000000000008', '/products/product-8.jpg', true),
+    ('80000000-0000-0000-0000-000000000009', 'f0000000-0000-0000-0000-000000000009', '/products/product-9.jpg', true),
+    ('80000000-0000-0000-0000-000000000010', 'f0000000-0000-0000-0000-000000000010', '/products/product-10.jpg', true),
+    ('80000000-0000-0000-0000-000000000011', 'f0000000-0000-0000-0000-000000000011', '/products/product-11.jpg', true),
+    ('80000000-0000-0000-0000-000000000012', 'f0000000-0000-0000-0000-000000000012', '/products/product-12.jpg', true),
+    ('80000000-0000-0000-0000-000000000013', 'f0000000-0000-0000-0000-000000000013', '/products/product-13.jpg', true),
+    ('80000000-0000-0000-0000-000000000014', 'f0000000-0000-0000-0000-000000000014', '/products/product-14.jpg', true),
+    ('80000000-0000-0000-0000-000000000015', 'f0000000-0000-0000-0000-000000000015', '/products/product-15.jpg', true),
+    ('80000000-0000-0000-0000-000000000016', 'f0000000-0000-0000-0000-000000000016', '/products/product-16.jpg', true)
 ON CONFLICT (id) DO UPDATE SET
     image_url = EXCLUDED.image_url,
     is_primary = EXCLUDED.is_primary;
