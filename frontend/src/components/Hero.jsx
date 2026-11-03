@@ -30,10 +30,13 @@ export default function Hero({ onOpenAuthModal }) {
           {/* Action CTAs */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="#auth-verification-section"
-              className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-200 transition transform hover:-translate-y-0.5 text-center"
+              href="#products"
+              className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-200 transition transform hover:-translate-y-0.5 text-center flex items-center justify-center gap-2"
             >
-              Test RBAC Access
+              <span>Explore Products</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </a>
             <button
               type="button"
