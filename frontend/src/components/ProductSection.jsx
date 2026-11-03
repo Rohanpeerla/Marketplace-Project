@@ -353,19 +353,15 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
                 >
                   {/* Visual Header */}
                   <div className="h-48 bg-slate-100 relative overflow-hidden flex items-center justify-center">
-                    {product.primary_image ? (
-                      <img
-                        src={product.primary_image}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800';
-                        }}
-                      />
-                    ) : (
-                      <div className="text-5xl text-slate-300">📦</div>
-                    )}
+                    <img
+                      src={product.primary_image || '/products/placeholder.jpg'}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/products/placeholder.jpg';
+                      }}
+                    />
 
                     {/* Category Tag */}
                     <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs">

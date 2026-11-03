@@ -173,8 +173,16 @@ export default function AdminOrdersModal({ isOpen, onClose }) {
                   {selectedOrder.items && selectedOrder.items.map((item) => (
                     <div key={item.id} className="p-3.5 flex items-center justify-between text-xs hover:bg-slate-50">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-base shrink-0">
-                          📦
+                        <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
+                          <img
+                            src={item.image || '/products/placeholder.jpg'}
+                            alt={item.product_name || 'Product'}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/products/placeholder.jpg';
+                            }}
+                          />
                         </div>
                         <div>
                           <div className="font-bold text-slate-900">{item.product_name || 'Product'}</div>

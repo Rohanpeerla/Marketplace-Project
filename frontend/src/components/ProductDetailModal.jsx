@@ -138,19 +138,15 @@ export default function ProductDetailModal({ product, isOpen, onClose, onOpenCar
             {/* Left Column: Image Gallery */}
             <div className="flex flex-col gap-3">
               <div className="aspect-square rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden relative group">
-                {activeImageUrl ? (
-                  <img
-                    src={activeImageUrl}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800';
-                    }}
-                  />
-                ) : (
-                  <div className="text-6xl text-slate-300">📦</div>
-                )}
+                <img
+                  src={activeImageUrl || '/products/placeholder.jpg'}
+                  alt={product.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/products/placeholder.jpg';
+                  }}
+                />
 
                 {/* Stock badge overlay */}
                 <div className="absolute top-3 right-3">
@@ -185,9 +181,13 @@ export default function ProductDetailModal({ product, isOpen, onClose, onOpenCar
                       }`}
                     >
                       <img
-                        src={img.image_url}
+                        src={img.image_url || '/products/placeholder.jpg'}
                         alt={`Thumbnail ${idx + 1}`}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/products/placeholder.jpg';
+                        }}
                       />
                     </button>
                   ))}

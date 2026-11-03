@@ -7,7 +7,7 @@
 
 const { pool, testConnection } = require('../src/config/db');
 const { esClient, testEsConnection } = require('../src/config/elasticsearch');
-const { reindexAllProducts } = require('../src/services/searchService');
+const { deleteProductIndex, initProductIndex, reindexAllProducts } = require('../src/services/searchService');
 
 const runReindex = async () => {
   console.log('====================================================');
@@ -28,6 +28,10 @@ const runReindex = async () => {
       await pool.end();
       process.exit(1);
     }
+
+    console.log('[Reindex] Resetting index to clear stale/deleted test entries...');
+    await deleteProductIndex();
+    await initProductIndex();
 
     console.log('[Reindex] Starting bulk reindexing of products...');
     const result = await reindexAllProducts();

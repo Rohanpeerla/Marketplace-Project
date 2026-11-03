@@ -574,17 +574,15 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
-                                {prod.primary_image ? (
-                                  <img
-                                    src={prod.primary_image}
-                                    alt={prod.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                    📦
-                                  </div>
-                                )}
+                                <img
+                                  src={prod.primary_image || '/products/placeholder.jpg'}
+                                  alt={prod.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = '/products/placeholder.jpg';
+                                  }}
+                                />
                               </div>
                               <div className="truncate max-w-[200px]">
                                 <span className="font-semibold text-slate-900 block truncate">
@@ -831,9 +829,22 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                     <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
                       {selectedOrderDetails.items && selectedOrderDetails.items.map((item) => (
                         <div key={item.id} className="p-3 flex items-center justify-between text-xs hover:bg-slate-50">
-                          <div>
-                            <div className="font-bold text-slate-900">{item.product_name || 'Product'}</div>
-                            <div className="text-slate-500 text-[11px]">Qty: {item.quantity} × ${Number(item.price).toFixed(2)}</div>
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-9 h-9 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
+                              <img
+                                src={item.image || '/products/placeholder.jpg'}
+                                alt={item.product_name || 'Product'}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = '/products/placeholder.jpg';
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <div className="font-bold text-slate-900">{item.product_name || 'Product'}</div>
+                              <div className="text-slate-500 text-[11px]">Qty: {item.quantity} × ${Number(item.price).toFixed(2)}</div>
+                            </div>
                           </div>
                           <div className="font-extrabold text-slate-900">
                             ${Number(item.subtotal || (item.price * item.quantity)).toFixed(2)}
@@ -1055,8 +1066,8 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                       Primary Image URL (Optional)
                     </label>
                     <input
-                      type="url"
-                      placeholder="https://images.unsplash.com/photo-..."
+                      type="text"
+                      placeholder="/products/product-1.jpg or https://..."
                       value={pImageUrl}
                       onChange={(e) => setPImageUrl(e.target.value)}
                       className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
@@ -1143,9 +1154,13 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                       >
                         <div className="aspect-video bg-slate-100 overflow-hidden">
                           <img
-                            src={img.image_url}
+                            src={img.image_url || '/products/placeholder.jpg'}
                             alt="Product preview"
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/products/placeholder.jpg';
+                            }}
                           />
                         </div>
                         <div className="p-2 flex items-center justify-between bg-white text-[10px]">
@@ -1179,9 +1194,9 @@ export default function VendorDashboardModal({ isOpen, onClose }) {
                 <span className="font-semibold uppercase text-slate-600 block">Add Image URL</span>
                 <div>
                   <input
-                    type="url"
+                    type="text"
                     required
-                    placeholder="https://images.unsplash.com/photo-..."
+                    placeholder="/products/product-1.jpg or https://..."
                     value={newImageUrl}
                     onChange={(e) => setNewImageUrl(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
