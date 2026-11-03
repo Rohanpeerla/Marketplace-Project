@@ -19,7 +19,8 @@ const loadRazorpayScript = () => {
 };
 
 export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenOrders }) {
-  const { cart, refreshCart } = useCart();
+  const { cart, refreshCart, fetchCart } = useCart();
+  const reloadCart = refreshCart || fetchCart || (() => {});
   const [formData, setFormData] = useState({
     shippingAddress: '',
     city: '',
@@ -45,7 +46,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
 
   useEffect(() => {
     if (isOpen) {
-      refreshCart();
+      reloadCart();
     }
   }, [isOpen]);
 
@@ -89,7 +90,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
               contact: formData.phone || '9999999999',
             },
             theme: {
-              color: '#4f46e5',
+              color: '#2563eb',
             },
             handler: async (response) => {
               await handleVerifyPayment({
@@ -238,7 +239,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
       if (onOrderSuccess) onOrderSuccess(createdOrders);
 
       // Invalidate frontend cart state
-      await refreshCart();
+      await reloadCart();
 
       // Immediately initiate Razorpay Test Payment Order
       await initiateRazorpayPayment(createdOrders);
@@ -254,7 +255,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
     setPaymentSession(null);
     setPaymentResult(null);
     setError('');
-    refreshCart();
+    reloadCart();
     onClose();
   };
 

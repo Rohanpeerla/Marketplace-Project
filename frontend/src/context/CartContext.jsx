@@ -141,6 +141,7 @@ export function CartProvider({ children }) {
     error,
     feedback,
     fetchCart,
+    refreshCart: fetchCart,
     addToCart,
     updateQuantity,
     removeFromCart,
