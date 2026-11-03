@@ -160,7 +160,7 @@ export default function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+        <div className="min-h-screen flex flex-col bg-[#070e1c] text-slate-100">
           {/* Top Navigation */}
           <Navbar
             apiStatus={apiStatus}

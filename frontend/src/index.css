@@ -7,14 +7,14 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #070e1c;
+  color: #f8fafc;
   min-height: 100vh;
 }
 
 ::selection {
-  background-color: #dbeafe;
-  color: #1e40af;
+  background-color: #1e3a8a;
+  color: #ffffff;
 }
 
 /* Custom scrollbars with blue accent */
@@ -23,10 +23,10 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0b1528;
 }
 ::-webkit-scrollbar-thumb {
-  background: #93c5fd;
+  background: #2563eb;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {

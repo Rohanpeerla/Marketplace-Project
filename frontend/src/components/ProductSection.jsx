@@ -169,37 +169,37 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
   };
 
   return (
-    <section id="products" className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
+    <section id="products" className="py-16 sm:py-20 bg-gradient-to-b from-[#0f203d] via-[#0b162b] to-[#070e1c] border-t border-blue-900/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-8">
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-1 flex items-center gap-2">
+            <div className="text-xs font-bold uppercase tracking-wider text-blue-300 mb-1 flex items-center gap-2">
               <span>Marketplace Catalog</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-[11px] text-slate-500 font-medium bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="text-[11px] text-blue-200 font-medium bg-blue-950/80 border border-blue-800/80 px-2.5 py-0.5 rounded-full shadow-inner">
                 ⚡ Live Engine: {searchSource === 'elasticsearch' ? 'Elasticsearch 7.17 Cluster' : 'PostgreSQL 16 Direct'}
               </span>
             </div>
-            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">
               Featured Vendor Products
             </h2>
-            <p className="mt-2 text-slate-600 text-sm max-w-xl">
+            <p className="mt-2 text-blue-200/90 text-sm max-w-xl">
               Discover authentic goods delivered directly by approved independent merchants across our multi-vendor network.
             </p>
           </div>
 
           {/* Search, Sort & Price Filter Controls */}
           <div className="flex flex-wrap items-center gap-2.5">
-            {/* Search Input */}
+            {/* Search Input (Crisp White Floating Input) */}
             <div className="relative flex-1 sm:flex-initial">
               <input
                 type="text"
                 placeholder="Search products (e.g. jacket, bottle, toothbrush)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 pr-8 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-72 md:w-80 shadow-sm transition"
+                className="pl-9 pr-8 py-2 bg-white border border-white rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-72 md:w-80 shadow-lg shadow-blue-950/30 transition"
               />
               <svg className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -216,11 +216,11 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
               )}
             </div>
 
-            {/* Price Filter Dropdown */}
+            {/* Price Filter Dropdown (Crisp White Control) */}
             <select
               value={priceFilter}
               onChange={(e) => setPriceFilter(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+              className="px-3 py-2 bg-white border border-white rounded-xl text-xs text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-md"
             >
               <option value="all">All Prices</option>
               <option value="under50">Under $50</option>
@@ -228,11 +228,11 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
               <option value="over100">Over $100</option>
             </select>
 
-            {/* Sort Options Dropdown */}
+            {/* Sort Options Dropdown (Crisp White Control) */}
             <select
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+              className="px-3 py-2 bg-white border border-white rounded-xl text-xs text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-md"
             >
               <option value="relevance">Sort: Relevance</option>
               <option value="price_asc">Price: Low to High</option>
@@ -245,7 +245,7 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
             <button
               type="button"
               onClick={() => fetchProducts(currentPage)}
-              className="p-2 text-slate-500 hover:text-blue-600 hover:bg-white rounded-xl border border-slate-200 transition shadow-sm"
+              className="p-2 text-slate-700 hover:text-blue-600 bg-white hover:bg-slate-50 rounded-xl border border-white transition shadow-md"
               title="Refresh search"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -284,10 +284,10 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
             <button
               type="button"
               onClick={() => setSelectedCategory('all')}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shadow-sm ${
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-md ${
                 selectedCategory === 'all'
-                  ? 'bg-blue-600 text-white ring-2 ring-blue-600/20'
-                  : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                  ? 'bg-blue-600 text-white ring-2 ring-blue-400/40 shadow-blue-500/20'
+                  : 'bg-white text-slate-800 hover:bg-slate-100 border border-slate-200'
               }`}
             >
               <span>🛍️</span>
@@ -298,17 +298,17 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
                 key={category.id}
                 type="button"
                 onClick={() => setSelectedCategory(category.id)}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shadow-sm ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-md ${
                   selectedCategory === category.id
-                    ? 'bg-blue-600 text-white ring-2 ring-blue-600/20'
-                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                    ? 'bg-blue-600 text-white ring-2 ring-blue-400/40 shadow-blue-500/20'
+                    : 'bg-white text-slate-800 hover:bg-slate-100 border border-slate-200'
                 }`}
               >
                 <span>{CATEGORY_ICONS[category.name] || '🏷️'}</span>
                 <span>{category.name}</span>
                 {category.product_count !== undefined && (
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
-                    selectedCategory === category.id ? 'bg-blue-800 text-blue-100' : 'bg-slate-100 text-slate-500'
+                    selectedCategory === category.id ? 'bg-blue-800 text-blue-100' : 'bg-slate-100 text-slate-600'
                   }`}>
                     {category.product_count}
                   </span>
@@ -317,11 +317,11 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
             ))}
           </div>
 
-          <div className="text-xs text-slate-500 font-medium">
-            Showing <span className="font-bold text-slate-800">{products.length}</span> of{' '}
-            <span className="font-bold text-slate-800">{pagination.total || products.length}</span> products
+          <div className="text-xs text-blue-200/90 font-medium">
+            Showing <span className="font-bold text-white">{products.length}</span> of{' '}
+            <span className="font-bold text-white">{pagination.total || products.length}</span> products
             {debouncedSearch && (
-              <span className="ml-1 text-blue-600 font-semibold">for &ldquo;{debouncedSearch}&rdquo;</span>
+              <span className="ml-1 text-sky-300 font-bold">for &ldquo;{debouncedSearch}&rdquo;</span>
             )}
           </div>
         </div>
