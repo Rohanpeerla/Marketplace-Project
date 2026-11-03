@@ -336,8 +336,8 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-slate-600">
-                      <div>Merchant: <strong className="text-slate-800">{ord.vendorName || 'Independent Vendor'}</strong></div>
-                      <div className="font-bold text-slate-900">${Number(ord.total).toFixed(2)}</div>
+                      <div>Merchant: <strong className="text-slate-800">{ord.vendorName || ord.vendor_name || 'Independent Vendor'}</strong></div>
+                      <div className="font-bold text-slate-900">${Number(ord.total || ord.total_amount || 0).toFixed(2)}</div>
                     </div>
                     {ord.invoiceNumber && (
                       <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px]">
@@ -379,7 +379,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                     <div className="text-right">
                       <div className="text-[10px] uppercase tracking-wider text-slate-400">Total Payable</div>
                       <div className="text-sm font-extrabold text-emerald-400">
-                        ${(paymentSession?.totalAmount || subtotal).toFixed(2)}
+                        ${Number(paymentSession?.totalAmount ?? subtotal ?? 0).toFixed(2)}
                       </div>
                     </div>
                   </div>
@@ -464,7 +464,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                           <span>Processing & Verifying Payment...</span>
                         </>
                       ) : (
-                        <span>Pay ${(paymentSession?.totalAmount || subtotal).toFixed(2)} (Complete Test Payment)</span>
+                        <span>Pay ${Number(paymentSession?.totalAmount ?? subtotal ?? 0).toFixed(2)} (Complete Test Payment)</span>
                       )}
                     </button>
                     <button
@@ -570,7 +570,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                     <div className="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-800">
                       <div className="flex items-center gap-1.5 font-semibold">
                         <span>🏷️</span>
-                        <span>{appliedCoupon.code} applied: -${appliedCoupon.discountAmount.toFixed(2)} savings</span>
+                        <span>{appliedCoupon.code} applied: -${Number(appliedCoupon?.discountAmount || 0).toFixed(2)} savings</span>
                       </div>
                       <button
                         type="button"
@@ -609,14 +609,14 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                 {appliedCoupon && (
                   <div className="flex justify-between items-center text-xs text-emerald-600 font-semibold pt-1">
                     <span>Discount:</span>
-                    <span>-${appliedCoupon.discountAmount.toFixed(2)}</span>
+                    <span>-${Number(appliedCoupon?.discountAmount || 0).toFixed(2)}</span>
                   </div>
                 )}
 
                 <div className="border-t border-slate-200 pt-2 flex justify-between items-center text-sm font-bold text-slate-900">
                   <span>Total Due:</span>
                   <span className="text-blue-600 text-base">
-                    ${(appliedCoupon ? appliedCoupon.finalAmount : subtotal).toFixed(2)}
+                    ${Number((appliedCoupon ? appliedCoupon.finalAmount : subtotal) || 0).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -722,7 +722,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                       <span>Placing Order & Preparing Payment...</span>
                     </>
                   ) : (
-                    <span>Proceed to Payment (${subtotal.toFixed(2)})</span>
+                    <span>Proceed to Payment (${Number(subtotal || 0).toFixed(2)})</span>
                   )}
                 </button>
               </div>
