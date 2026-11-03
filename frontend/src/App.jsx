@@ -3,8 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import AuthTestCard from './components/AuthTestCard';
-import BackendStatusCard from './components/BackendStatusCard';
+import SystemStatusModal from './components/SystemStatusModal';
 import ProductSection from './components/ProductSection';
 import ProductDetailModal from './components/ProductDetailModal';
 import VendorDashboardModal from './components/VendorDashboardModal';
@@ -29,6 +28,13 @@ export default function App() {
   const [redisStatus, setRedisStatus] = useState(null);
   const [redisLoading, setRedisLoading] = useState(true);
   const [redisError, setRedisError] = useState(null);
+
+  const [searchStatus, setSearchStatus] = useState(null);
+  const [searchLoading, setSearchLoading] = useState(true);
+  const [searchError, setSearchError] = useState(null);
+
+  // Full-Stack System Architecture Inspector Modal State
+  const [isSystemStatusOpen, setIsSystemStatusOpen] = useState(false);
 
   // Auth Modal State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -126,6 +132,25 @@ export default function App() {
     } finally {
       setRedisLoading(false);
     }
+
+    // Check Elasticsearch Search Health (GET /api/health/search)
+    setSearchLoading(true);
+    setSearchError(null);
+    try {
+      let resSearch;
+      try {
+        resSearch = await fetch(`${baseUrl}/api/health/search`);
+      } catch {
+        resSearch = await fetch('http://localhost:5000/api/health/search');
+      }
+      const dataSearch = await resSearch.json();
+      setSearchStatus(dataSearch);
+    } catch {
+      setSearchError('Search check could not be completed');
+      setSearchStatus(null);
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -139,6 +164,7 @@ export default function App() {
           {/* Top Navigation */}
           <Navbar
             apiStatus={apiStatus}
+            onOpenSystemStatus={() => setIsSystemStatusOpen(true)}
             onOpenAuthModal={openAuthModal}
             onOpenVendorDashboard={() => setIsVendorDashboardOpen(true)}
             onOpenAdminCategories={() => setIsAdminCategoryOpen(true)}
@@ -152,23 +178,6 @@ export default function App() {
           <main className="flex-1">
             {/* Hero Section */}
             <Hero onOpenAuthModal={openAuthModal} />
-
-            {/* Interactive Stage 3 RBAC Verification Section */}
-            <AuthTestCard onOpenAuthModal={openAuthModal} />
-
-            {/* Live Infrastructure Status Card (API + DB + Redis) */}
-            <BackendStatusCard
-              apiStatus={apiStatus}
-              apiLoading={apiLoading}
-              apiError={apiError}
-              dbStatus={dbStatus}
-              dbLoading={dbLoading}
-              dbError={dbError}
-              redisStatus={redisStatus}
-              redisLoading={redisLoading}
-              redisError={redisError}
-              onRefresh={fetchHealthChecks}
-            />
 
             {/* Product Marketplace Catalog Section */}
             <ProductSection
@@ -243,6 +252,24 @@ export default function App() {
           <AdminAnalyticsModal
             isOpen={isAdminAnalyticsOpen}
             onClose={() => setIsAdminAnalyticsOpen(false)}
+          />
+          {/* Full-Stack Live System Infrastructure Inspector Modal */}
+          <SystemStatusModal
+            isOpen={isSystemStatusOpen}
+            onClose={() => setIsSystemStatusOpen(false)}
+            apiStatus={apiStatus}
+            apiLoading={apiLoading}
+            apiError={apiError}
+            dbStatus={dbStatus}
+            dbLoading={dbLoading}
+            dbError={dbError}
+            redisStatus={redisStatus}
+            redisLoading={redisLoading}
+            redisError={redisError}
+            searchStatus={searchStatus}
+            searchLoading={searchLoading}
+            searchError={searchError}
+            onRefresh={fetchHealthChecks}
           />
         </div>
       </CartProvider>

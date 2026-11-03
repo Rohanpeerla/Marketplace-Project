@@ -3,6 +3,14 @@ import { searchApi, productApi, categoryApi } from '../services/api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
+const CATEGORY_ICONS = {
+  'Electronics & Gadgets': '⚡',
+  'Fashion & Apparel': '👕',
+  'Home & Living': '🏡',
+  'Health & Wellness': '🧴',
+  'Books & Stationery': '📚',
+};
+
 export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
   const { addToCart } = useCart();
   const { user, isAuthenticated } = useAuth();
@@ -13,6 +21,7 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [priceFilter, setPriceFilter] = useState('all');
   const [sortOption, setSortOption] = useState('relevance');
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,6 +29,14 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchSource, setSearchSource] = useState('elasticsearch'); // 'elasticsearch' | 'database'
+
+  // Debounce search input by 200ms for smooth typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   // Load categories
   useEffect(() => {
@@ -51,8 +68,8 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
       params.category_id = selectedCategory;
     }
 
-    if (searchTerm.trim()) {
-      params.q = searchTerm.trim();
+    if (debouncedSearch.trim()) {
+      params.q = debouncedSearch.trim();
     }
 
     if (priceFilter === 'under50') {
@@ -87,7 +104,7 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
           status: 'active',
         };
         if (selectedCategory !== 'all') dbParams.categoryId = selectedCategory;
-        if (searchTerm.trim()) dbParams.search = searchTerm.trim();
+        if (debouncedSearch.trim()) dbParams.search = debouncedSearch.trim();
         if (params.min_price) dbParams.minPrice = params.min_price;
         if (params.max_price) dbParams.maxPrice = params.max_price;
 
@@ -108,13 +125,13 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, selectedCategory, searchTerm, priceFilter, sortOption]);
+  }, [currentPage, selectedCategory, debouncedSearch, priceFilter, sortOption]);
 
   // When filters or sort change, reset to page 1
   useEffect(() => {
     setCurrentPage(1);
     fetchProducts(1);
-  }, [selectedCategory, searchTerm, priceFilter, sortOption]);
+  }, [selectedCategory, debouncedSearch, priceFilter, sortOption]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages && newPage !== currentPage) {
@@ -156,13 +173,13 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-8">
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-1 flex items-center gap-1.5">
+            <div className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-1 flex items-center gap-2">
               <span>Marketplace Catalog</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              <span className="text-[10px] text-slate-400 font-mono">
-                {searchSource === 'elasticsearch' ? 'Elasticsearch 7.17 Cluster' : 'PostgreSQL 16 Direct'}
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-[11px] text-slate-500 font-medium bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
+                ⚡ Live Engine: {searchSource === 'elasticsearch' ? 'Elasticsearch 7.17 Cluster' : 'PostgreSQL 16 Direct'}
               </span>
             </div>
             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -174,26 +191,36 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
           </div>
 
           {/* Search, Sort & Price Filter Controls */}
-          <div className="mt-6 md:mt-0 flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5">
             {/* Search Input */}
-            <div className="relative">
+            <div className="relative flex-1 sm:flex-initial">
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search products (e.g. jacket, bottle, toothbrush)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 pr-3.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-44 sm:w-52"
+                className="pl-9 pr-8 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-72 md:w-80 shadow-sm transition"
               />
-              <svg className="w-4 h-4 text-slate-400 absolute left-3 top-2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 text-xs w-5 h-5 rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200"
+                  title="Clear search"
+                >
+                  ✕
+                </button>
+              )}
             </div>
 
             {/* Price Filter Dropdown */}
             <select
               value={priceFilter}
               onChange={(e) => setPriceFilter(e.target.value)}
-              className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
             >
               <option value="all">All Prices</option>
               <option value="under50">Under $50</option>
@@ -205,9 +232,9 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
             <select
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
-              className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
             >
-              <option value="relevance">Relevance</option>
+              <option value="relevance">Sort: Relevance</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>
               <option value="name_asc">Name: A to Z</option>
@@ -218,7 +245,7 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
             <button
               type="button"
               onClick={() => fetchProducts(currentPage)}
-              className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-white rounded-lg border border-slate-200 transition"
+              className="p-2 text-slate-500 hover:text-blue-600 hover:bg-white rounded-xl border border-slate-200 transition shadow-sm"
               title="Refresh search"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -251,40 +278,52 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
           </div>
         )}
 
-        {/* Category Filter Pills */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          <button
-            type="button"
-            onClick={() => setSelectedCategory('all')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-              selectedCategory === 'all'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-            }`}
-          >
-            All Categories
-          </button>
-          {categories.map((category) => (
+        {/* Category Filter Pills & Product Count */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
+          <div className="flex flex-wrap items-center gap-2">
             <button
-              key={category.id}
               type="button"
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-                selectedCategory === category.id
-                  ? 'bg-blue-600 text-white shadow-sm'
+              onClick={() => setSelectedCategory('all')}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shadow-sm ${
+                selectedCategory === 'all'
+                  ? 'bg-blue-600 text-white ring-2 ring-blue-600/20'
                   : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
               }`}
             >
-              {category.name}
-              {category.product_count !== undefined && (
-                <span className={`ml-1.5 text-[10px] px-1.5 py-0.2 rounded-full ${
-                  selectedCategory === category.id ? 'bg-blue-800 text-blue-100' : 'bg-slate-100 text-slate-500'
-                }`}>
-                  {category.product_count}
-                </span>
-              )}
+              <span>🛍️</span>
+              <span>All Categories</span>
             </button>
-          ))}
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => setSelectedCategory(category.id)}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shadow-sm ${
+                  selectedCategory === category.id
+                    ? 'bg-blue-600 text-white ring-2 ring-blue-600/20'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                <span>{CATEGORY_ICONS[category.name] || '🏷️'}</span>
+                <span>{category.name}</span>
+                {category.product_count !== undefined && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
+                    selectedCategory === category.id ? 'bg-blue-800 text-blue-100' : 'bg-slate-100 text-slate-500'
+                  }`}>
+                    {category.product_count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="text-xs text-slate-500 font-medium">
+            Showing <span className="font-bold text-slate-800">{products.length}</span> of{' '}
+            <span className="font-bold text-slate-800">{pagination.total || products.length}</span> products
+            {debouncedSearch && (
+              <span className="ml-1 text-blue-600 font-semibold">for &ldquo;{debouncedSearch}&rdquo;</span>
+            )}
+          </div>
         </div>
 
         {/* Loading State */}

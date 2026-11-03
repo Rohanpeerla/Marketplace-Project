@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 
 export default function Navbar({
   apiStatus,
+  onOpenSystemStatus,
   onOpenAuthModal,
   onOpenVendorDashboard,
   onOpenAdminCategories,
@@ -54,22 +55,34 @@ export default function Navbar({
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
-            <a href="#home" className="text-blue-600 hover:text-blue-700 transition">Home</a>
-            <a href="#products" className="hover:text-blue-600 transition">Products</a>
-            <a href="#auth-verification-section" className="hover:text-blue-600 transition flex items-center gap-1.5">
-              <span>RBAC Testing</span>
-              <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-100 text-blue-700">Stage 3</span>
-            </a>
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
+            <a href="#home" className="text-slate-700 hover:text-blue-600 font-semibold transition">Home</a>
+            <a href="#products" className="text-slate-700 hover:text-blue-600 font-semibold transition">Products</a>
+            <button
+              type="button"
+              onClick={onOpenSystemStatus}
+              className="text-slate-600 hover:text-blue-600 transition flex items-center gap-1.5"
+            >
+              <span>Architecture</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-100 text-blue-700">Full-Stack</span>
+            </button>
           </nav>
 
           {/* Actions & Role-Based Control Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            {/* API Health Indicator Badge */}
-            <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 mr-1">
-              <span className={`w-2 h-2 rounded-full ${apiStatus?.success ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`}></span>
-              <span>{apiStatus?.success ? 'Backend Online' : 'Connecting...'}</span>
-            </div>
+            {/* Full-Stack Live System Inspector Trigger */}
+            <button
+              type="button"
+              onClick={onOpenSystemStatus}
+              title="Click to view live full-stack system architecture & service health"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-emerald-800 transition active:scale-95 shadow-2xs mr-1"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Full-Stack Live</span>
+              <span className="text-[10px] text-emerald-600 font-bold bg-white/80 px-1.5 py-0.2 rounded border border-emerald-200/50">
+                API • DB • Redis • ES
+              </span>
+            </button>
 
             {/* Authenticated User View vs Unauthenticated Buttons */}
             {isAuthenticated && user ? (
@@ -218,9 +231,19 @@ export default function Navbar({
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-3">
-          <a href="#home" className="block text-base font-medium text-blue-600">Home</a>
+          <a href="#home" className="block text-base font-medium text-slate-700">Home</a>
           <a href="#products" className="block text-base font-medium text-slate-700">Products</a>
-          <a href="#auth-verification-section" className="block text-base font-medium text-slate-700">RBAC Testing (Stage 3)</a>
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              if (onOpenSystemStatus) onOpenSystemStatus();
+            }}
+            className="w-full text-left py-1 text-base font-semibold text-emerald-700 flex items-center gap-2"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>⚡ Full-Stack Architecture Inspector</span>
+          </button>
 
           {/* Mobile Role Controls */}
           {isAuthenticated && user && (
