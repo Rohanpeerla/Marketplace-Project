@@ -23,8 +23,14 @@ export default function ProductDetailModal({ product, isOpen, onClose, onOpenCar
 
   useEffect(() => {
     if (isOpen && product?.id) {
+      setSelectedImage(null);
+      setQuantity(1);
+      setErrorMsg(null);
+      setJustAdded(false);
+      setReviewFeedback(null);
       loadReviews(product.id);
     } else {
+      setSelectedImage(null);
       setReviewsData(null);
       setReviewFeedback(null);
       setReviewComment('');

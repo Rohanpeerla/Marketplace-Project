@@ -58,7 +58,7 @@ async function cleanTestProducts() {
         [testIds]
       );
 
-      // Remove product_images for test products
+      // Remove product images referencing test products
       await client.query(
         "DELETE FROM product_images WHERE product_id = ANY($1::uuid[])",
         [testIds]
@@ -69,6 +69,14 @@ async function cleanTestProducts() {
         "DELETE FROM products WHERE id = ANY($1::uuid[])",
         [testIds]
       );
+    }
+
+    // Clean up test categories created by test runs
+    const testCats = await client.query(
+      "DELETE FROM categories WHERE id::text NOT LIKE 'd0000000-%' RETURNING id, name"
+    );
+    if (testCats.rows.length > 0) {
+      console.log(`[Cleanup] Removed ${testCats.rows.length} leftover test categories.`);
     }
 
     // Refresh timestamps on the 6 genuine seed products so they are fresh

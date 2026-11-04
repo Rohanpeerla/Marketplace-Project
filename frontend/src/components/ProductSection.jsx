@@ -293,7 +293,9 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
               <span>🛍️</span>
               <span>All Categories</span>
             </button>
-            {categories.map((category) => (
+            {categories
+              .filter((c) => c.product_count > 0 || (c.id && c.id.startsWith('d0000000')))
+              .map((category) => (
               <button
                 key={category.id}
                 type="button"
@@ -390,8 +392,12 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
                   key={product.id}
                   className="group bg-white rounded-2xl border border-slate-200/90 hover:border-blue-300 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between"
                 >
-                  {/* Visual Header */}
-                  <div className="h-48 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                  {/* Visual Header (Clickable) */}
+                  <div
+                    onClick={() => onViewProduct && onViewProduct(product)}
+                    className="h-48 bg-slate-100 relative overflow-hidden flex items-center justify-center cursor-pointer"
+                    title="Click to view full product details"
+                  >
                     <img
                       src={product.primary_image || '/products/placeholder.jpg'}
                       alt={product.name}
@@ -436,8 +442,12 @@ export default function ProductSection({ onViewProduct, onOpenAuthModal }) {
                         <span>{product.vendor_name || 'Independent Merchant'}</span>
                       </div>
 
-                      {/* Title */}
-                      <h3 className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition line-clamp-1">
+                      {/* Title (Clickable) */}
+                      <h3
+                        onClick={() => onViewProduct && onViewProduct(product)}
+                        className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition line-clamp-1 cursor-pointer"
+                        title="Click to view full product details"
+                      >
                         {product.name}
                       </h3>
 
