@@ -589,13 +589,13 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                           value={couponCode}
                           onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                           placeholder="e.g. WELCOME10 or FLAT50"
-                          className="flex-1 px-3 py-1.5 border border-slate-300 rounded-lg text-xs uppercase font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
+                          className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 uppercase font-bold focus:ring-2 focus:ring-blue-500 shadow-sm outline-hidden"
                         />
                         <button
                           type="button"
                           disabled={isValidatingCoupon || !couponCode.trim()}
                           onClick={handleApplyCoupon}
-                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white text-xs font-semibold rounded-lg transition"
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white text-xs font-bold rounded-xl shadow-sm transition"
                         >
                           {isValidatingCoupon ? 'Checking...' : 'Apply'}
                         </button>
@@ -624,12 +624,12 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
 
               {/* Shipping Address Inputs */}
               <div className="space-y-3">
-                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                   Delivery Address & Contact
                 </h4>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-800 mb-1">
                     Street Address <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -639,56 +639,56 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess, onOpenO
                     onChange={handleChange}
                     placeholder="e.g. 123 Market St, Suite 400"
                     required
-                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm outline-hidden"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">City</label>
+                    <label className="block text-xs font-semibold text-slate-800 mb-1">City</label>
                     <input
                       type="text"
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
                       placeholder="e.g. San Francisco"
-                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm outline-hidden"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">State / Province</label>
+                    <label className="block text-xs font-semibold text-slate-800 mb-1">State / Province</label>
                     <input
                       type="text"
                       name="state"
                       value={formData.state}
                       onChange={handleChange}
                       placeholder="e.g. CA"
-                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm outline-hidden"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">Postal Code</label>
+                    <label className="block text-xs font-semibold text-slate-800 mb-1">Postal Code</label>
                     <input
                       type="text"
                       name="postalCode"
                       value={formData.postalCode}
                       onChange={handleChange}
                       placeholder="e.g. 94105"
-                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm outline-hidden"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+                    <label className="block text-xs font-semibold text-slate-800 mb-1">Phone Number</label>
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="e.g. 555-0199"
-                      className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm outline-hidden"
                     />
                   </div>
                 </div>
