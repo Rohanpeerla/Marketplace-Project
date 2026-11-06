@@ -161,7 +161,34 @@ CREATE TRIGGER trg_cart_items_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- -----------------------------------------------------------------------------
--- 8. ORDERS TABLE
+-- 8. COUPONS TABLE
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS coupons (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code VARCHAR(50) NOT NULL UNIQUE,
+    discount_type VARCHAR(20) NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
+    discount_value NUMERIC(12,2) NOT NULL CHECK (discount_value > 0),
+    minimum_order_amount NUMERIC(12,2) DEFAULT 0.00 CHECK (minimum_order_amount >= 0),
+    maximum_discount_amount NUMERIC(12,2) CHECK (maximum_discount_amount >= 0),
+    start_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    expiry_date TIMESTAMPTZ,
+    usage_limit INTEGER DEFAULT NULL,
+    used_count INTEGER NOT NULL DEFAULT 0,
+    active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
+
+DROP TRIGGER IF EXISTS trg_coupons_updated_at ON coupons;
+CREATE TRIGGER trg_coupons_updated_at
+    BEFORE UPDATE ON coupons
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- -----------------------------------------------------------------------------
+-- 9. ORDERS TABLE
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -260,29 +287,4 @@ CREATE TRIGGER trg_reviews_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
--- -----------------------------------------------------------------------------
--- 12. COUPONS TABLE
--- -----------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS coupons (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    code VARCHAR(50) NOT NULL UNIQUE,
-    discount_type VARCHAR(20) NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
-    discount_value NUMERIC(12,2) NOT NULL CHECK (discount_value > 0),
-    minimum_order_amount NUMERIC(12,2) DEFAULT 0.00 CHECK (minimum_order_amount >= 0),
-    maximum_discount_amount NUMERIC(12,2) CHECK (maximum_discount_amount >= 0),
-    start_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    expiry_date TIMESTAMPTZ,
-    usage_limit INTEGER DEFAULT NULL,
-    used_count INTEGER NOT NULL DEFAULT 0,
-    active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
 
-CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
-
-DROP TRIGGER IF EXISTS trg_coupons_updated_at ON coupons;
-CREATE TRIGGER trg_coupons_updated_at
-    BEFORE UPDATE ON coupons
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
